@@ -1,93 +1,93 @@
-# Contributing to pi
+# Contribuir a pi
 
-This guide exists to save both sides time.
+Esta guía existe para ahorrar tiempo a ambas partes.
 
-## The One Rule
+## La Única Regla
 
-**You must understand your code.** If you cannot explain what your changes do and how they interact with the rest of the system, your PR will be closed.
+**Debes entender tu código.** Si no puedes explicar qué hacen tus cambios y cómo interactúan con el resto del sistema, tu PR será cerrado.
 
-Using AI to write code is fine. Submitting AI-generated slop without understanding it is not.
+Usar IA para escribir código está bien. Enviar código generado por IA sin entenderlo no lo está.
 
-If you use an agent, run it from the `pi-mono` root directory so it picks up `AGENTS.md` automatically. Your agent must follow the rules and guidelines in that file.
+Si usas un agente, ejecútalo desde el directorio raíz de `pi-mono` para que recoja `AGENTS.md` automáticamente. Tu agente debe seguir las reglas y directrices de ese archivo.
 
-## Contribution Gate
+## Puerta de Contribución
 
-All issues and PRs from new contributors are auto-closed by default.
+Todos los issues y PRs de nuevos colaboradores se cierran automáticamente por defecto.
 
-Issues submitted Friday through Sunday are not reviewed. If something is urgent, ask on Discord: https://discord.com/invite/3cU7Bz4UPx
+Los issues enviados entre viernes y domingo no se revisan. Si algo es urgente, pregunta en Discord: https://discord.com/invite/3cU7Bz4UPx
 
-Maintainers review auto-closed issues daily and reopen worthwhile ones. Issues that do not meet the quality bar below will not be reopened or receive a reply.
+Los mantenedores revisan los issues cerrados automáticamente a diario y reabren los que valen la pena. Los issues que no cumplan con el estándar de calidad a continuación no serán reabiertos ni recibirán respuesta.
 
-Approval happens through maintainer replies on issues:
+La aprobación ocurre a través de respuestas de los mantenedores en los issues:
 
-- `lgtmi`: your future issues will not be auto-closed
-- `lgtm`: your future issues and PRs will not be auto-closed
+- `lgtmi`: tus futuros issues no se cerrarán automáticamente
+- `lgtm`: tus futuros issues y PRs no se cerrarán automáticamente
 
-`lgtmi` does not grant rights to submit PRs. Only `lgtm` grants rights to submit PRs.
+`lgtmi` no otorga derechos para enviar PRs. Solo `lgtm` otorga derechos para enviar PRs.
 
-## Quality Bar For Issues
+## Estándar de Calidad para Issues
 
-If you open an issue, you must use one of the two GitHub issue templates.
+Si abres un issue, debes usar una de las dos plantillas de issues de GitHub.
 
-If you open an issue, keep it short, concrete, and worth reading.
+Si abres un issue, manténlo breve, concreto y que valga la pena leer.
 
-- Keep it concise. If it does not fit on one screen, it is too long.
-- Write in your own voice.
-- State the bug or request clearly.
-- Explain why it matters.
-- If you want to implement the change yourself, say so.
+- Sé conciso. Si no cabe en una pantalla, es demasiado largo.
+- Escribe con tu propia voz.
+- Explica el bug o la solicitud claramente.
+- Explica por qué importa.
+- Si quieres implementar el cambio tú mismo, dilo.
 
-If the issue is real and written well, a maintainer may reopen it, reply `lgtmi`, or reply `lgtm`.
+Si el issue es real y está bien escrito, un mantenedor puede reabrirlo, responder `lgtmi` o responder `lgtm`.
 
-## Blocking
+## Bloqueos
 
-If you ignore this document twice, or if you spam the tracker with agent-generated issues, your GitHub account will be permanently blocked.
+Si ignoras este documento dos veces, o si inundas el tracker con issues generados por agentes, tu cuenta de GitHub será bloqueada permanentemente.
 
-If you send a large volume of issues through automation, your GitHub account will be permanently blocked. No taksies backsies.
+Si envías un gran volumen de issues a través de automatización, tu cuenta de GitHub será bloqueada permanentemente. Sin marcha atrás.
 
-## Before Submitting a PR
+## Antes de Enviar un PR
 
-Do not open a PR unless you have already been approved with `lgtm`.
+No abras un PR a menos que ya hayas sido aprobado con `lgtm`.
 
-Before submitting a PR:
+Antes de enviar un PR:
 
 ```bash
 npm run check
 ./test.sh
 ```
 
-Both must pass.
+Ambos deben pasar.
 
-Do not edit `CHANGELOG.md`. Changelog entries are added by maintainers.
+No edites `CHANGELOG.md`. Las entradas del changelog las añaden los mantenedores.
 
-If you are adding a new provider to `packages/ai`, see `AGENTS.md` for required tests.
+Si estás añadiendo un nuevo proveedor a `packages/ai`, consulta `AGENTS.md` para las pruebas requeridas.
 
-## Philosophy
+## Filosofía
 
-pi's core is minimal. If your feature does not belong in the core, it should be an extension. PRs that bloat the core will likely be rejected.
+El núcleo de pi es mínimo. Si tu función no pertenece al núcleo, debería ser una extensión. Los PRs que hinchen el núcleo probablemente serán rechazados.
 
-## Questions?
+## ¿Preguntas?
 
-Ask on [Discord](https://discord.com/invite/nKXTsAcmbT).
+Pregunta en [Discord](https://discord.com/invite/nKXTsAcmbT).
 
-## FAQ
+## Preguntas Frecuentes
 
-### Why are new issues and PRs auto-closed?
+### ¿Por qué los nuevos issues y PRs se cierran automáticamente?
 
-pi receives more issues than the maintainers can responsibly review in real time. Many reports do not meet the quality bar in this guide or do not follow CONTRIBUTING.md. Some are slung at the repository mindlessly via an agent instead of being reviewed and shaped by the person submitting them. Auto-closing creates a buffer so maintainers can review the tracker on their own schedule and reopen the issues that meet the quality bar.
+pi recibe más issues de los que los mantenedores pueden revisar responsablemente en tiempo real. Muchos reportes no cumplen con el estándar de calidad de esta guía o no siguen CONTRIBUTING.md. Algunos se lanzan al repositorio de forma mecánica a través de un agente en lugar de ser revisados y formados por la persona que los envía. El cierre automático crea un buffer para que los mantenedores puedan revisar el tracker a su propio ritmo y reabrir los issues que cumplan con el estándar de calidad.
 
-### Why are weekend issues not reviewed?
+### ¿Por qué no se revisan los issues del fin de semana?
 
-Maintainers need uninterrupted time away from the issue tracker. Issues submitted Friday through Sunday are auto-closed and are not part of the Monday review queue. If a problem is urgent, ask on Discord and include the short version, a repro, and the relevant logs.
+Los mantenedores necesitan tiempo ininterrumpido lejos del tracker de issues. Los issues enviados entre viernes y domingo se cierran automáticamente y no forman parte de la cola de revisión del lunes. Si un problema es urgente, pregunta en Discord e incluye la versión corta, un repro y los logs relevantes.
 
-### Why do some issues get no reply?
+### ¿Por qué algunos issues no reciben respuesta?
 
-A reply is maintenance work too. Low-signal issues, unclear reports, duplicates, and issues that do not follow this guide may be closed without discussion. This keeps time available for reproducible bugs, thoughtful requests, and contributors who have done the work to make their report actionable.
+Una respuesta también es trabajo de mantenimiento. Los issues de baja señal, reportes poco claros, duplicados e issues que no siguen esta guía pueden cerrarse sin discusión. Esto mantiene el tiempo disponible para bugs reproducibles, solicitudes reflexivas y colaboradores que han hecho el trabajo para hacer su reporte accionable.
 
-### Why not let AI triage everything?
+### ¿Por qué no dejar que la IA triage todo?
 
-AI can help group duplicates, summarize reports, and spot missing information. It is not trusted to make final maintainer decisions. Polished AI-generated issues can still be wrong, misleading, or expensive to investigate. Human review remains the final gate.
+La IA puede ayudar a agrupar duplicados, resumir reportes y detectar información faltante. No se confía en ella para tomar decisiones finales de los mantenedores. Los issues generados por IA pulidos aún pueden estar equivocados, ser engañosos o costosos de investigar. La revisión humana sigue siendo la puerta final.
 
-### Is this hostile to contributors?
+### ¿Es esto hostil para los colaboradores?
 
-No. It is a guardrail against burnout and tracker spam. Short, concrete, reproducible issues are welcome. Thoughtful contributions are welcome. Automated slop, entitlement, and large volumes of low-effort reports are not.
+No. Es una barrera de protección contra el burnout y el spam en el tracker. Los issues breves, concretos y reproducibles son bienvenidos. Las contribuciones reflexivas son bienvenidas. El código automatizado sin sentido, la sensación de entitlement y los grandes volúmenes de reportes de bajo esfuerzo no lo son.

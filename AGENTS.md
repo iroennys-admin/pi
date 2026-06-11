@@ -1,162 +1,162 @@
-# Development Rules
+# Reglas de Desarrollo
 
-## Conversational Style
+## Estilo Conversacional
 
-- Keep answers short and concise
-- No emojis in commits, issues, PR comments, or code
-- No fluff or cheerful filler text (e.g., "Thanks @user" not "Thanks so much @user!")
-- Technical prose only, be direct
-- When the user asks a question, answer it first before making edits or running implementation commands.
-- When responding to user feedback or an analysis, explicitly say whether you agree or disagree before saying what you changed.
+- Mantén las respuestas breves y concisas
+- Sin emojis en commits, issues, comentarios de PR o código
+- Sin relleno ni texto alegre innecesario (ej.: "Gracias @usuario" no "¡Muchas gracias @usuario!")
+- Solo prosa técnica, sé directo
+- Cuando el usuario haga una pregunta, respóndela primero antes de hacer ediciones o ejecutar comandos de implementación.
+- Al responder a comentarios del usuario o a un análisis, di explícitamente si estás de acuerdo o en desacuerdo antes de decir qué cambiaste.
 
-## Code Quality
+## Calidad del Código
 
-- Read files in full before wide-ranging changes, before editing files you have not fully inspected, and when asked to investigate or audit. Do not rely on search snippets for broad changes.
-- No `any` unless absolutely necessary.
-- Inline single-line helpers that have only one call site.
-- Check node_modules for external API types; don't guess.
-- **No inline imports** (`await import()`, `import("pkg").Type`, dynamic type imports). Top-level imports only.
-- Never remove or downgrade code to fix type errors from outdated deps; upgrade the dep instead.
-- Use only erasable TypeScript syntax (Node strip-only mode) in code checked by the root config (`packages/*/src`, `packages/*/test`, `packages/coding-agent/examples`): no parameter properties, `enum`, `namespace`/`module`, `import =`, `export =`, or other constructs needing JS emit. Use explicit fields with constructor assignments.
-- Always ask before removing functionality or code that appears intentional.
-- Do not preserve backward compatibility unless the user asks for it.
-- Never hardcode key checks (e.g. `matchesKey(keyData, "ctrl+x")`). Add defaults to `DEFAULT_EDITOR_KEYBINDINGS` or `DEFAULT_APP_KEYBINDINGS` so they stay configurable.
-- Never modify `packages/ai/src/models.generated.ts` directly; update `packages/ai/scripts/generate-models.ts` instead, then regenerate. Including the resulting `models.generated.ts` diff is always OK, even if regeneration includes unrelated upstream model metadata changes.
+- Lee los archivos completos antes de hacer cambios extensos, antes de editar archivos que no has inspeccionado completamente y cuando te pidan investigar o auditar. No confíes en fragmentos de búsqueda para cambios amplios.
+- Sin `any` a menos que sea absolutamente necesario.
+- Inlinea los helpers de una sola línea que tienen un solo sitio de llamada.
+- Revisa node_modules para los tipos de API externas; no adivines.
+- **Sin imports inline** (`await import()`, `import("pkg").Type`, imports de tipos dinámicos). Solo imports de nivel superior.
+- Nunca elimines o degradues código para corregir errores de tipos de dependencias desactualizadas; mejor actualiza la dependencia.
+- Usa solo sintaxis TypeScript borrable (modo strip-only de Node) en el código verificado por la configuración raíz (`packages/*/src`, `packages/*/test`, `packages/coding-agent/examples`): sin propiedades de parámetros, `enum`, `namespace`/`module`, `import =`, `export =` u otras construcciones que necesiten emisión de JS. Usa campos explícitos con asignaciones en el constructor.
+- Siempre pregunta antes de eliminar funcionalidad o código que parezca intencional.
+- No preserves compatibilidad hacia atrás a menos que el usuario lo pida.
+- Nunca codifiques verificaciones de teclas (ej. `matchesKey(keyData, "ctrl+x")`). Añade los valores por defecto a `DEFAULT_EDITOR_KEYBINDINGS` o `DEFAULT_APP_KEYBINDINGS` para que sigan siendo configurables.
+- Nunca modifiques `packages/ai/src/models.generated.ts` directamente; actualiza `packages/ai/scripts/generate-models.ts` en su lugar, luego regenera. Incluir el diff resultante de `models.generated.ts` siempre está bien, incluso si la regeneración incluye cambios no relacionados en los metadatos de modelos upstream.
 
-## Commands
+## Comandos
 
-- After code changes (not docs): `npm run check` (full output, no tail). Fix all errors, warnings, and infos before committing. Does not run tests.
-- Never run `npm run build` or `npm test` unless requested by the user.
-- Never run the full vitest suite directly: it includes e2e tests that activate when endpoint/auth env vars are present. For all non-e2e tests, run `./test.sh` from the repo root. Otherwise run specific tests from the package root: `node ../../node_modules/vitest/dist/cli.js --run test/specific.test.ts`.
-- If you create or modify a test file, run it and iterate on test or implementation until it passes.
-- For `packages/coding-agent/test/suite/`, use `test/suite/harness.ts` + the faux provider. No real provider APIs, keys, or paid tokens.
-- Put issue-specific regressions under `packages/coding-agent/test/suite/regressions/` named `<issue-number>-<short-slug>.test.ts`.
-- For ad-hoc scripts, `write` them to a temp file (e.g. `/tmp`), run, edit if needed, remove when done. Don't embed multi-line scripts in `bash` commands.
-- Never commit unless the user asks.
+- Después de cambios de código (no docs): `npm run check` (salida completa, sin truncar). Corrige todos los errores, advertencias e infos antes de hacer commit. No ejecuta pruebas.
+- Nunca ejecutes `npm run build` o `npm test` a menos que el usuario lo pida.
+- Nunca ejecutes el suite completo de vitest directamente: incluye pruebas e2e que se activan cuando las variables de entorno de endpoint/auth están presentes. Para todas las pruebas que no sean e2e, ejecuta `./test.sh` desde la raíz del repositorio. De lo contrario, ejecuta pruebas específicas desde la raíz del paquete: `node ../../node_modules/vitest/dist/cli.js --run test/specific.test.ts`.
+- Si creas o modificas un archivo de prueba, ejecútalo e itera en la prueba o implementación hasta que pase.
+- Para `packages/coding-agent/test/suite/`, usa `test/suite/harness.ts` + el proveedor faux. Sin APIs de proveedores reales, claves ni tokens de pago.
+- Pon las regresiones específicas de issues bajo `packages/coding-agent/test/suite/regressions/` nombradas `<número-de-issue>-<slug-corto>.test.ts`.
+- Para scripts ad-hoc, `escríbelos` en un archivo temporal (ej. `/tmp`), ejecuta, edita si es necesario, elimina cuando termines. No incrustes scripts multilínea en comandos `bash`.
+- Nunca hagas commit a menos que el usuario lo pida.
 
-## Dependency and Install Security
+## Seguridad de Dependencias e Instalación
 
-- Treat npm dep and lockfile changes as reviewed code. Direct external deps stay pinned to exact versions.
-- Hydrate/update locally with `npm install --ignore-scripts`; clean/CI-style with `npm ci --ignore-scripts`. Don't run lifecycle scripts unless the user asks.
-- If dep metadata changes, refresh `package-lock.json` with `npm install --package-lock-only --ignore-scripts`.
-- If `packages/coding-agent/npm-shrinkwrap.json` needs regen, run `node scripts/generate-coding-agent-shrinkwrap.mjs` (verify with `--check` or `npm run check`). New deps with lifecycle scripts require review and an explicit allowlist entry in that script; never add one silently.
-- Pre-commit blocks lockfile commits unless `PI_ALLOW_LOCKFILE_CHANGE=1`. Don't bypass unless the user wants the lockfile change committed.
+- Trata los cambios de dependencias npm y del lockfile como código revisado. Las dependencias externas directas permanecen fijadas a versiones exactas.
+- Hidrata/actualiza localmente con `npm install --ignore-scripts`; de forma limpia/estilo CI con `npm ci --ignore-scripts`. No ejecutes scripts de ciclo de vida a menos que el usuario lo pida.
+- Si cambian los metadatos de dependencias, refresca `package-lock.json` con `npm install --package-lock-only --ignore-scripts`.
+- Si `packages/coding-agent/npm-shrinkwrap.json` necesita regeneración, ejecuta `node scripts/generate-coding-agent-shrinkwrap.mjs` (verifica con `--check` o `npm run check`). Las nuevas dependencias con scripts de ciclo de vida requieren revisión y una entrada explícita en la lista de permitidos en ese script; nunca añadas una silenciosamente.
+- El pre-commit bloquea commits del lockfile a menos que `PI_ALLOW_LOCKFILE_CHANGE=1`. No lo omitas a menos que el usuario quiera que se committee el cambio del lockfile.
 
 ## Git
 
-Multiple pi sessions may be running in this cwd at the same time, each modifying different files. Git operations that touch unstaged, staged, or untracked files outside your own changes will stomp on other sessions' work. Follow these rules:
+Pueden estar ejecutándose múltiples sesiones de pi en este directorio de trabajo al mismo tiempo, cada una modificando archivos diferentes. Las operaciones de Git que toquen archivos sin stage, con stage o no rastreados fuera de tus propios cambios destruirán el trabajo de otras sesiones. Sigue estas reglas:
 
-Committing:
+Al hacer commit:
 
-- Only commit files YOU changed in THIS session.
-- Stage explicit paths (`git add <path1> <path2>`); never `git add -A` / `git add .`.
-- Before committing, run `git status` and verify you are only staging your files.
-- `packages/ai/src/models.generated.ts` may always be included alongside your files.
-- Message format: `{feat,fix,docs}[(ai,tui,agent,coding-agent)]: <commit message> (optionally multiple lines)`. Message is informative and concise.
+- Solo haz commit de los archivos que TÚ cambiaste en ESTA sesión.
+- Haz stage de rutas explícitas (`git add <ruta1> <ruta2>`); nunca `git add -A` / `git add .`.
+- Antes de hacer commit, ejecuta `git status` y verifica que solo estás haciendo stage de tus archivos.
+- `packages/ai/src/models.generated.ts` siempre puede incluirse junto con tus archivos.
+- Formato del mensaje: `{feat,fix,docs}[(ai,tui,agent,coding-agent)]: <mensaje de commit> (opcionalmente múltiples líneas)`. El mensaje es informativo y conciso.
 
-Never run (destroys other agents' work or bypasses checks):
+Nunca ejecutes (destruye el trabajo de otros agentes o omite verificaciones):
 
 - `git reset --hard`, `git checkout .`, `git clean -fd`, `git stash`, `git add -A`, `git add .`, `git commit --no-verify`.
 
-If rebase conflicts occur:
+Si ocurren conflictos de rebase:
 
-- Resolve conflicts only in files you modified.
-- If a conflict is in a file you did not modify, abort and ask the user.
-- Never force push.
+- Resuelve conflictos solo en los archivos que modificaste.
+- Si hay un conflicto en un archivo que no modificaste, aborta y pregunta al usuario.
+- Nunca hagas force push.
 
-## Issues and PRs
+## Issues y PRs
 
-See `CONTRIBUTING.md` for the contributor gate (auto-close workflows, `lgtm`/`lgtmi`, quality bar).
+Consulta `CONTRIBUTING.md` para la puerta de colaboradores (workflows de cierre automático, `lgtm`/`lgtmi`, estándar de calidad).
 
-When reviewing PRs:
+Al revisar PRs:
 
-- Do not run `gh pr checkout`, `git switch`, or otherwise move the worktree to the PR branch unless the user explicitly asks.
-- Use `gh pr view`, `gh pr diff`, `gh api`, and local `git show`/`git diff` against fetched refs to inspect PR metadata, commits, and patches without changing branches.
-- If you need PR file contents, fetch/read them into temporary files or use `git show <ref>:<path>` without switching branches.
+- No ejecutes `gh pr checkout`, `git switch` ni muevas el worktree a la rama del PR a menos que el usuario lo pida explícitamente.
+- Usa `gh pr view`, `gh pr diff`, `gh api` y `git show`/`git diff` local contra refs descargadas para inspeccionar los metadatos del PR, commits y parches sin cambiar de rama.
+- Si necesitas el contenido de archivos del PR, descárgalos/leeos en archivos temporales o usa `git show <ref>:<ruta>` sin cambiar de rama.
 
-When creating issues:
+Al crear issues:
 
-- Add `pkg:*` labels for affected packages (`pkg:agent`, `pkg:ai`, `pkg:coding-agent`, `pkg:tui`); use all that apply.
+- Añade etiquetas `pkg:*` para los paquetes afectados (`pkg:agent`, `pkg:ai`, `pkg:coding-agent`, `pkg:tui`); usa todas las que apliquen.
 
-When posting issue/PR comments:
+Al publicar comentarios en issues/PRs:
 
-- Write the comment to a temp file and post with `gh issue/pr comment --body-file` (never multi-line markdown via `--body`).
-- Keep comments concise, technical, in the user's tone.
-- End every AI-posted comment with the AI-generated disclaimer line specified by the originating prompt (e.g. `This comment is AI-generated by `/wr``).
+- Escribe el comentario en un archivo temporal y publícalo con `gh issue/pr comment --body-file` (nunca markdown multilínea vía `--body`).
+- Mantén los comentarios concisos, técnicos, en el tono del usuario.
+- Termina cada comentario publicado por IA con la línea de descargo de responsabilidad generada por IA especificada por el prompt de origen (ej. `Este comentario es generado por IA por `/wr``).
 
-When closing issues via commit:
+Al cerrar issues mediante commit:
 
-- Include `fixes #<number>` or `closes #<number>` in the message so merging auto-closes the issue. For multiple issues, repeat the keyword per issue (`closes #1, closes #2`); a shared keyword (`closes #1, #2`) only closes the first.
+- Incluye `fixes #<número>` o `closes #<número>` en el mensaje para que al mergear se cierre automáticamente el issue. Para múltiples issues, repite la palabra clave por issue (`closes #1, closes #2`); una palabra clave compartida (`closes #1, #2`) solo cierra el primero.
 
-## Testing pi Interactive Mode with tmux
+## Probar el Modo Interactivo de pi con tmux
 
-Run the TUI in a controlled terminal (from the repo root):
+Ejecuta la TUI en una terminal controlada (desde la raíz del repositorio):
 
 ```bash
 tmux new-session -d -s pi-test -x 80 -y 24
 tmux send-keys -t pi-test "./pi-test.sh" Enter
-sleep 3 && tmux capture-pane -t pi-test -p     # capture after startup
-tmux send-keys -t pi-test "your prompt here" Enter
-tmux send-keys -t pi-test Escape               # special keys (also C-o for ctrl+o, etc.)
+sleep 3 && tmux capture-pane -t pi-test -p     # capturar después del inicio
+tmux send-keys -t pi-test "tu prompt aquí" Enter
+tmux send-keys -t pi-test Escape               # teclas especiales (también C-o para ctrl+o, etc.)
 tmux kill-session -t pi-test
 ```
 
 ## Changelog
 
-Location: `packages/*/CHANGELOG.md` (one per package).
+Ubicación: `packages/*/CHANGELOG.md` (uno por paquete).
 
-Sections under `## [Unreleased]`: `### Breaking Changes` (API changes requiring migration), `### Added`, `### Changed`, `### Fixed`, `### Removed`.
+Secciones bajo `## [Unreleased]`: `### Breaking Changes` (cambios de API que requieren migración), `### Added`, `### Changed`, `### Fixed`, `### Removed`.
 
-Rules:
+Reglas:
 
-- All new entries go under `## [Unreleased]`. Read the full section first and append to existing subsections; never duplicate them.
-- Released version sections (e.g. `## [0.12.2]`) are immutable; never modify them.
+- Todas las nuevas entradas van bajo `## [Unreleased]`. Lee primero la sección completa y añade a las subsecciones existentes; nunca las dupliques.
+- Las secciones de versiones publicadas (ej. `## [0.12.2]`) son inmutables; nunca las modifiques.
 
-Attribution:
+Atribución:
 
-- Internal (from issues): `Fixed foo bar ([#123](https://github.com/earendil-works/pi-mono/issues/123))`
-- External contributions: `Added feature X ([#456](https://github.com/earendil-works/pi-mono/pull/456) by [@username](https://github.com/username))`
+- Interna (desde issues): `Fixed foo bar ([#123](https://github.com/earendil-works/pi-mono/issues/123))`
+- Contribuciones externas: `Added feature X ([#456](https://github.com/earendil-works/pi-mono/pull/456) by [@username](https://github.com/username))`
 
-## Releasing
+## Releases
 
-**Lockstep versioning**: all packages share one version; every release updates all together. `patch` = fixes + additions, `minor` = breaking changes. No major releases.
+**Versionado sincronizado**: todos los paquetes comparten una versión; cada release actualiza todos juntos. `patch` = correcciones + adiciones, `minor` = cambios rupturistas. Sin releases major.
 
-1. **Update CHANGELOGs**: ask the user whether they ran the `/cl` prompt on the latest commit on `main`. If not, they must run `/cl` first to audit and update each package's `[Unreleased]` section before releasing.
+1. **Actualizar CHANGELOGs**: pregunta al usuario si ejecutó el prompt `/cl` en el último commit de `main`. Si no, debe ejecutar `/cl` primero para auditar y actualizar la sección `[Unreleased]` de cada paquete antes de hacer el release.
 
-2. **Local smoke test**: build an unpublished release and smoke test from outside the repo (so it can't resolve workspace files):
+2. **Prueba de humo local**: construye un release no publicado y haz prueba de humo desde fuera del repositorio (para que no pueda resolver archivos del workspace):
    ```bash
    npm run release:local -- --out /tmp/pi-local-release --force
    cd /tmp
 
-   # Node package install smoke tests
+   # Pruebas de humo de instalación del paquete Node
    /tmp/pi-local-release/node/pi --help
    /tmp/pi-local-release/node/pi --version
    /tmp/pi-local-release/node/pi --list-models
    /tmp/pi-local-release/node/pi -p "Say exactly: ok"
    /tmp/pi-local-release/node/pi
 
-   # Bun binary smoke tests
+   # Pruebas de humo del binario Bun
    /tmp/pi-local-release/bun/pi --help
    /tmp/pi-local-release/bun/pi --version
    /tmp/pi-local-release/bun/pi --list-models
    /tmp/pi-local-release/bun/pi -p "Say exactly: ok"
    /tmp/pi-local-release/bun/pi
    ```
-   Verify both Node and Bun startup, model/account listing, interactive startup, and at least one real prompt with the intended default provider. The bare commands `/tmp/pi-local-release/node/pi` and `/tmp/pi-local-release/bun/pi` start interactive mode; run each in tmux, submit a prompt, and wait for the model reply before considering the interactive smoke test passed. Failures are release blockers unless the user explicitly accepts the risk.
+   Verifica que tanto Node como Bun inicien, listen modelos/cuentas, inicien en modo interactivo y al menos un prompt real con el proveedor por defecto deseado. Los comandos sin argumentos `/tmp/pi-local-release/node/pi` y `/tmp/pi-local-release/bun/pi` inician el modo interactivo; ejecuta cada uno en tmux, envía un prompt y espera la respuesta del modelo antes de considerar la prueba de humo interactiva pasada. Los fallos son bloqueadores de release a menos que el usuario acepte explícitamente el riesgo.
 
-3. **Run the release script**:
+3. **Ejecutar el script de release**:
    ```bash
-   PI_ALLOW_LOCKFILE_CHANGE=1 npm_config_min_release_age=0 npm run release:patch    # fixes + additions
-   PI_ALLOW_LOCKFILE_CHANGE=1 npm_config_min_release_age=0 npm run release:minor    # breaking changes
+   PI_ALLOW_LOCKFILE_CHANGE=1 npm_config_min_release_age=0 npm run release:patch    # correcciones + adiciones
+   PI_ALLOW_LOCKFILE_CHANGE=1 npm_config_min_release_age=0 npm run release:minor    # cambios rupturistas
    ```
-   Use `npm_config_min_release_age=0` only for the release command. The repo's normal npm age gate can otherwise block the release lockfile refresh when the current workspace package version was published recently. Review any lockfile or shrinkwrap diffs the release creates before push.
+   Usa `npm_config_min_release_age=0` solo para el comando de release. La puerta de edad normal de npm del repositorio de lo contrario puede bloquear la actualización del lockfile del release cuando la versión actual del paquete del workspace fue publicada recientemente. Revisa cualquier diff del lockfile o shrinkwrap que el release cree antes de hacer push.
 
-   The release script bumps all package versions, updates changelogs, regenerates release artifacts, runs `npm run check`, commits `Release vX.Y.Z`, tags `vX.Y.Z`, adds fresh `## [Unreleased]` changelog sections, commits `Add [Unreleased] section for next cycle`, then pushes `main` and the tag. Do not rerun the release script after a tag was pushed.
+   El script de release incrementa las versiones de todos los paquetes, actualiza los changelogs, regenera los artefactos de release, ejecuta `npm run check`, hace commit de `Release vX.Y.Z`, etiqueta `vX.Y.Z`, añade nuevas secciones `## [Unreleased]` al changelog, hace commit de `Add [Unreleased] section for next cycle`, luego hace push de `main` y la etiqueta. No vuelvas a ejecutar el script de release después de que se haya hecho push de una etiqueta.
 
-4. **CI publishes npm packages**: pushing the `vX.Y.Z` tag triggers `.github/workflows/build-binaries.yml`. The `publish-npm` job uses npm trusted publishing through GitHub Actions OIDC with environment `npm-publish`; no local `npm publish`, `npm whoami`, OTP, or WebAuthn flow is required.
+4. **CI publica los paquetes npm**: hacer push de la etiqueta `vX.Y.Z` activa `.github/workflows/build-binaries.yml`. El job `publish-npm` usa npm trusted publishing a través de GitHub Actions OIDC con el entorno `npm-publish`; no se requiere `npm publish` local, `npm whoami`, OTP ni flujo WebAuthn.
 
-5. **If CI publish fails**: inspect the failed `publish-npm` job. The publish helper is idempotent and skips package versions already present on npm, so rerun the tag workflow after fixing CI or transient npm issues. Do not rerun `npm run release:patch` or `npm run release:minor` for the same version.
+5. **Si la publicación de CI falla**: inspecciona el job `publish-npm` fallido. El helper de publicación es idempotente y omite las versiones de paquetes ya presentes en npm, así que vuelve a ejecutar el workflow de la etiqueta después de corregir CI o problemas transitorios de npm. No vuelvas a ejecutar `npm run release:patch` o `npm run release:minor` para la misma versión.
 
-## User Override
+## Anulación del Usuario
 
-If the user's instructions conflict with any rule in this document, ask for explicit confirmation before overriding. Only then execute their instructions.
+Si las instrucciones del usuario entran en conflicto con alguna regla de este documento, pide confirmación explícita antes de anular. Solo entonces ejecuta sus instrucciones.
