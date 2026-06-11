@@ -14,7 +14,7 @@ import type {
 	AgentToolUpdateCallback,
 	ThinkingLevel,
 	ToolExecutionMode,
-} from "@earendil-works/pi-agent-core";
+} from "@iroennys/iropi-agent-core";
 import type {
 	Api,
 	AssistantMessageEvent,
@@ -27,7 +27,7 @@ import type {
 	SimpleStreamOptions,
 	TextContent,
 	ToolResultMessage,
-} from "@earendil-works/pi-ai";
+} from "@iroennys/iropi-ai";
 import type {
 	AutocompleteItem,
 	AutocompleteProvider,
@@ -38,7 +38,7 @@ import type {
 	OverlayHandle,
 	OverlayOptions,
 	TUI,
-} from "@earendil-works/pi-tui";
+} from "@iroennys/iropi-tui";
 import type { Static, TSchema } from "typebox";
 import type { Theme } from "../../modes/interactive/theme/theme.ts";
 import type { BashResult } from "../bash-executor.ts";
@@ -73,6 +73,12 @@ import type {
 	LsToolInput,
 	ReadToolDetails,
 	ReadToolInput,
+	WebFetchToolDetails,
+	WebFetchToolInput,
+	WebScrapeToolDetails,
+	WebScrapeToolInput,
+	WebSearchToolDetails,
+	WebSearchToolInput,
 	WriteToolInput,
 } from "../tools/index.ts";
 
@@ -226,12 +232,12 @@ export interface ExtensionUIContext {
 	 * - `keybindings`: KeybindingsManager for app-level keybindings
 	 *
 	 * For full app keybinding support (escape, ctrl+d, model switching, etc.),
-	 * extend `CustomEditor` from `@earendil-works/pi-coding-agent` and call
+	 * extend `CustomEditor` from `@iroennys/iropi-coding-agent` and call
 	 * `super.handleInput(data)` for keys you don't handle.
 	 *
 	 * @example
 	 * ```ts
-	 * import { CustomEditor } from "@earendil-works/pi-coding-agent";
+	 * import { CustomEditor } from "@iroennys/iropi-coding-agent";
 	 *
 	 * class VimEditor extends CustomEditor {
 	 *   private mode: "normal" | "insert" = "insert";
@@ -322,7 +328,7 @@ export interface ExtensionContext {
 	abort(): void;
 	/** Whether there are queued messages waiting */
 	hasPendingMessages(): boolean;
-	/** Gracefully shutdown pi and exit. Available in all contexts. */
+	/** Gracefully shutdown iropi and exit. Available in all contexts. */
 	shutdown(): void;
 	/** Get current context usage for the active model. */
 	getContextUsage(): ContextUsage | undefined;
@@ -843,6 +849,21 @@ export interface LsToolCallEvent extends ToolCallEventBase {
 	input: LsToolInput;
 }
 
+export interface WebFetchToolCallEvent extends ToolCallEventBase {
+	toolName: "web_fetch";
+	input: WebFetchToolInput;
+}
+
+export interface WebScrapeToolCallEvent extends ToolCallEventBase {
+	toolName: "web_scrape";
+	input: WebScrapeToolInput;
+}
+
+export interface WebSearchToolCallEvent extends ToolCallEventBase {
+	toolName: "web_search";
+	input: WebSearchToolInput;
+}
+
 export interface CustomToolCallEvent extends ToolCallEventBase {
 	toolName: string;
 	input: Record<string, unknown>;
@@ -862,6 +883,9 @@ export type ToolCallEvent =
 	| GrepToolCallEvent
 	| FindToolCallEvent
 	| LsToolCallEvent
+	| WebFetchToolCallEvent
+	| WebScrapeToolCallEvent
+	| WebSearchToolCallEvent
 	| CustomToolCallEvent;
 
 interface ToolResultEventBase {
@@ -907,6 +931,21 @@ export interface LsToolResultEvent extends ToolResultEventBase {
 	details: LsToolDetails | undefined;
 }
 
+export interface WebFetchToolResultEvent extends ToolResultEventBase {
+	toolName: "web_fetch";
+	details: WebFetchToolDetails | undefined;
+}
+
+export interface WebScrapeToolResultEvent extends ToolResultEventBase {
+	toolName: "web_scrape";
+	details: WebScrapeToolDetails | undefined;
+}
+
+export interface WebSearchToolResultEvent extends ToolResultEventBase {
+	toolName: "web_search";
+	details: WebSearchToolDetails | undefined;
+}
+
 export interface CustomToolResultEvent extends ToolResultEventBase {
 	toolName: string;
 	details: unknown;
@@ -921,6 +960,9 @@ export type ToolResultEvent =
 	| GrepToolResultEvent
 	| FindToolResultEvent
 	| LsToolResultEvent
+	| WebFetchToolResultEvent
+	| WebScrapeToolResultEvent
+	| WebSearchToolResultEvent
 	| CustomToolResultEvent;
 
 // Type guards for ToolResultEvent
@@ -944,6 +986,15 @@ export function isFindToolResult(e: ToolResultEvent): e is FindToolResultEvent {
 }
 export function isLsToolResult(e: ToolResultEvent): e is LsToolResultEvent {
 	return e.toolName === "ls";
+}
+export function isWebFetchToolResult(e: ToolResultEvent): e is WebFetchToolResultEvent {
+	return e.toolName === "web_fetch";
+}
+export function isWebScrapeToolResult(e: ToolResultEvent): e is WebScrapeToolResultEvent {
+	return e.toolName === "web_scrape";
+}
+export function isWebSearchToolResult(e: ToolResultEvent): e is WebSearchToolResultEvent {
+	return e.toolName === "web_search";
 }
 
 /**
@@ -973,6 +1024,9 @@ export function isToolCallEventType(toolName: "write", event: ToolCallEvent): ev
 export function isToolCallEventType(toolName: "grep", event: ToolCallEvent): event is GrepToolCallEvent;
 export function isToolCallEventType(toolName: "find", event: ToolCallEvent): event is FindToolCallEvent;
 export function isToolCallEventType(toolName: "ls", event: ToolCallEvent): event is LsToolCallEvent;
+export function isToolCallEventType(toolName: "web_fetch", event: ToolCallEvent): event is WebFetchToolCallEvent;
+export function isToolCallEventType(toolName: "web_scrape", event: ToolCallEvent): event is WebScrapeToolCallEvent;
+export function isToolCallEventType(toolName: "web_search", event: ToolCallEvent): event is WebSearchToolCallEvent;
 export function isToolCallEventType<TName extends string, TInput extends Record<string, unknown>>(
 	toolName: TName,
 	event: ToolCallEvent,
@@ -1289,7 +1343,7 @@ export interface ExtensionAPI {
 	 *
 	 * @example
 	 * // Register a new provider with custom models
-	 * pi.registerProvider("my-proxy", {
+	 * iropi.registerProvider("my-proxy", {
 	 *   baseUrl: "https://proxy.example.com",
 	 *   apiKey: "$PROXY_API_KEY",
 	 *   api: "anthropic-messages",
@@ -1308,13 +1362,13 @@ export interface ExtensionAPI {
 	 *
 	 * @example
 	 * // Override baseUrl for an existing provider
-	 * pi.registerProvider("anthropic", {
+	 * iropi.registerProvider("anthropic", {
 	 *   baseUrl: "https://proxy.example.com"
 	 * });
 	 *
 	 * @example
 	 * // Register provider with OAuth support
-	 * pi.registerProvider("corporate-ai", {
+	 * iropi.registerProvider("corporate-ai", {
 	 *   baseUrl: "https://ai.corp.com",
 	 *   api: "openai-responses",
 	 *   models: [...],
@@ -1339,7 +1393,7 @@ export interface ExtensionAPI {
 	 * the initial load phase.
 	 *
 	 * @example
-	 * pi.unregisterProvider("my-proxy");
+	 * iropi.unregisterProvider("my-proxy");
 	 */
 	unregisterProvider(name: string): void;
 
@@ -1351,7 +1405,7 @@ export interface ExtensionAPI {
 // Provider Registration Types
 // ============================================================================
 
-/** Configuration for registering a provider via pi.registerProvider(). */
+/** Configuration for registering a provider via iropi.registerProvider(). */
 export interface ProviderConfig {
 	/** Display name for the provider in UI. */
 	name?: string;
@@ -1396,7 +1450,7 @@ export interface ProviderModelConfig {
 	baseUrl?: string;
 	/** Whether the model supports extended thinking. */
 	reasoning: boolean;
-	/** Maps pi thinking levels to provider/model-specific values; null marks a level unsupported. */
+	/** Maps iropi thinking levels to provider/model-specific values; null marks a level unsupported. */
 	thinkingLevelMap?: Model<Api>["thinkingLevelMap"];
 	/** Supported input types. */
 	input: ("text" | "image")[];
@@ -1413,7 +1467,7 @@ export interface ProviderModelConfig {
 }
 
 /** Extension factory function type. Supports both sync and async initialization. */
-export type ExtensionFactory = (pi: ExtensionAPI) => void | Promise<void>;
+export type ExtensionFactory = (iropi: ExtensionAPI) => void | Promise<void>;
 
 // ============================================================================
 // Loaded Extension Types
@@ -1503,7 +1557,7 @@ export interface ExtensionRuntimeState {
 }
 
 /**
- * Action implementations for pi.* API methods.
+ * Action implementations for iropi.* API methods.
  * Provided to runner.initialize(), copied into the shared runtime.
  */
 export interface ExtensionActions {

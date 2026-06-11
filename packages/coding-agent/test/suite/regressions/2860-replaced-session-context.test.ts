@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fauxAssistantMessage, registerFauxProvider } from "@earendil-works/pi-ai";
+import { fauxAssistantMessage, registerFauxProvider } from "@iroennys/iropi-ai";
 import { afterEach, describe, expect, it } from "vitest";
 import type { AgentSession } from "../../../src/core/agent-session.ts";
 import {
@@ -54,8 +54,8 @@ describe("regression #2860: replaced session callbacks", () => {
 				authStorage,
 				resourceLoaderOptions: {
 					extensionFactories: [
-						(pi: ExtensionAPI) => {
-							pi.registerProvider(faux.getModel().provider, {
+						(iropi: ExtensionAPI) => {
+							iropi.registerProvider(faux.getModel().provider, {
 								baseUrl: faux.getModel().baseUrl,
 								apiKey: "faux-key",
 								api: faux.api,
@@ -70,7 +70,7 @@ describe("regression #2860: replaced session callbacks", () => {
 									maxTokens: registeredModel.maxTokens,
 								})),
 							});
-							extensionFactory(pi);
+							extensionFactory(iropi);
 						},
 					],
 					noSkills: true,
@@ -149,15 +149,15 @@ describe("regression #2860: replaced session callbacks", () => {
 		let replacementSessionFile: string | undefined;
 		let instanceId = 0;
 		const { runtime } = await createRuntimeForTest(
-			(pi) => {
+			(iropi) => {
 				const currentInstance = ++instanceId;
-				pi.on("session_start", () => {
+				iropi.on("session_start", () => {
 					events.push(`start:${currentInstance}`);
 				});
-				pi.on("session_shutdown", () => {
+				iropi.on("session_shutdown", () => {
 					events.push(`shutdown:${currentInstance}`);
 				});
-				pi.registerCommand("repro", {
+				iropi.registerCommand("repro", {
 					description: "repro",
 					handler: async (_args, ctx) => {
 						oldCtx = ctx;
@@ -204,8 +204,8 @@ describe("regression #2860: replaced session callbacks", () => {
 
 	it("supports withSession for fork", async () => {
 		const { runtime } = await createRuntimeForTest(
-			(pi) => {
-				pi.registerCommand("fork-it", {
+			(iropi) => {
+				iropi.registerCommand("fork-it", {
 					description: "fork-it",
 					handler: async (_args, ctx) => {
 						const leafId = ctx.sessionManager.getLeafId();
@@ -238,8 +238,8 @@ describe("regression #2860: replaced session callbacks", () => {
 	it("supports withSession for switchSession", async () => {
 		let targetSessionPath = "";
 		const { runtime } = await createRuntimeForTest(
-			(pi) => {
-				pi.registerCommand("switch-it", {
+			(iropi) => {
+				iropi.registerCommand("switch-it", {
 					description: "switch-it",
 					handler: async (_args, ctx) => {
 						await ctx.switchSession(targetSessionPath, {

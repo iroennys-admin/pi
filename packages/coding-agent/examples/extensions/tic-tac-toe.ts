@@ -17,9 +17,9 @@
  * separate variables. Only the agent cursor is ever exposed to the agent.
  */
 
-import { StringEnum } from "@earendil-works/pi-ai";
-import type { ExtensionAPI, ExtensionContext, Theme, ToolExecutionMode } from "@earendil-works/pi-coding-agent";
-import { type Component, matchesKey, Text, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
+import { StringEnum } from "@iroennys/iropi-ai";
+import type { ExtensionAPI, ExtensionContext, Theme, ToolExecutionMode } from "@iroennys/iropi-coding-agent";
+import { type Component, matchesKey, Text, truncateToWidth, visibleWidth } from "@iroennys/iropi-tui";
 import { Type } from "typebox";
 
 // Thrown from the tool on illegal actions. The agent runtime surfaces thrown
@@ -655,9 +655,9 @@ function getBoardDetails(): BoardDetails {
 	};
 }
 
-export default function (pi: ExtensionAPI) {
-	pi.on("session_start", async (_event, ctx) => reconstructState(ctx));
-	pi.on("session_tree", async (_event, ctx) => reconstructState(ctx));
+export default function (iropi: ExtensionAPI) {
+	iropi.on("session_start", async (_event, ctx) => reconstructState(ctx));
+	iropi.on("session_tree", async (_event, ctx) => reconstructState(ctx));
 
 	// Sent once per game at end-of-game. The custom renderer paints the banner;
 	// `content` is a plain-text fallback for any non-TUI consumer and for the
@@ -682,7 +682,7 @@ export default function (pi: ExtensionAPI) {
 	// -----------------------------------------------------------------------
 	// Custom message renderer for user move messages
 	// -----------------------------------------------------------------------
-	pi.registerMessageRenderer(MOVE_MESSAGE_TYPE, (message, { expanded }, theme) => {
+	iropi.registerMessageRenderer(MOVE_MESSAGE_TYPE, (message, { expanded }, theme) => {
 		const details = message.details as BoardDetails | undefined;
 		const turnLabel =
 			details?.currentTurn === "O"
@@ -695,7 +695,7 @@ export default function (pi: ExtensionAPI) {
 	// -----------------------------------------------------------------------
 	// Custom message renderer for game-over messages
 	// -----------------------------------------------------------------------
-	pi.registerMessageRenderer(GAME_OVER_MESSAGE_TYPE, (message, _options, theme) => {
+	iropi.registerMessageRenderer(GAME_OVER_MESSAGE_TYPE, (message, _options, theme) => {
 		const details = message.details as BoardDetails | undefined;
 		const status = (details?.status ?? "draw") as GameStatus;
 		return new GameOverMessageComponent(status, details, theme);
@@ -704,7 +704,7 @@ export default function (pi: ExtensionAPI) {
 	// -----------------------------------------------------------------------
 	// before_agent_start - inject game instructions each turn
 	// -----------------------------------------------------------------------
-	pi.on("before_agent_start", async (event) => {
+	iropi.on("before_agent_start", async (event) => {
 		if (!gameActive) return undefined;
 
 		const instructions = `
@@ -775,7 +775,7 @@ Decide the target cell first, then dump every action for the turn in one go.
 	// -----------------------------------------------------------------------
 	// /tic-tac-toe command
 	// -----------------------------------------------------------------------
-	pi.registerCommand("tic-tac-toe", {
+	iropi.registerCommand("tic-tac-toe", {
 		description: "Play tic-tac-toe against the agent",
 
 		handler: async (_args, ctx) => {
@@ -856,7 +856,7 @@ Decide the target cell first, then dump every action for the turn in one go.
 		play: 0,
 	};
 
-	pi.registerTool({
+	iropi.registerTool({
 		name: "tic_tac_toe",
 		label: "Tic-Tac-Toe",
 		description:
@@ -969,7 +969,7 @@ Decide the target cell first, then dump every action for the turn in one go.
 	// -----------------------------------------------------------------------
 	// tic_tac_toe_see_board tool - inspect board + agent cursor.
 	// -----------------------------------------------------------------------
-	pi.registerTool({
+	iropi.registerTool({
 		name: "tic_tac_toe_see_board",
 		label: "See Board",
 		description:

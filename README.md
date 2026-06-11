@@ -1,74 +1,165 @@
 <p align="center">
-  <a href="https://pi.dev">
-    <img alt="logo de pi" src="https://pi.dev/logo-auto.svg" width="128">
+  <a href="https://github.com/iroennys-admin/pi">
+    <img alt="Logo de IROPI" src="https://pi.dev/logo-auto.svg" width="128">
   </a>
 </p>
 <p align="center">
-  <a href="https://discord.com/invite/3cU7Bz4UPx"><img alt="Discord" src="https://img.shields.io/badge/discord-comunidad-5865F2?style=flat-square&logo=discord&logoColor=white" /></a>
-</p>
-<p align="center">
-  El dominio <a href="https://pi.dev">pi.dev</a> ha sido amablemente donado por
-  <br /><br />
-  <a href="https://exe.dev"><img src="packages/coding-agent/docs/images/exy.png" alt="Mascota Exy" width="48" /><br />exe.dev</a>
+  <a href="https://github.com/iroennys-admin/pi"><img alt="GitHub" src="https://img.shields.io/badge/github-repo-181717?style=flat-square&logo=github&logoColor=white" /></a>
+  <img alt="Versión" src="https://img.shields.io/badge/versión-0.79.1-blue?style=flat-square" />
+  <img alt="Licencia" src="https://img.shields.io/badge/licencia-MIT-green?style=flat-square" />
 </p>
 
-> Los nuevos issues y PRs de nuevos colaboradores se cierran automáticamente por defecto. Los mantenedores revisan los issues cerrados automáticamente a diario. Consulta [CONTRIBUTING.md](CONTRIBUTING.md).
+<h1 align="center">IROPI</h1>
+<p align="center"><strong>Agente de Codificación AI Avanzado con Web Scraping</strong></p>
+<p align="center">Creado por <a href="https://github.com/iroennys-admin">iroennys-admin</a></p>
 
 ---
 
-# Mono Repositorio del Harness de Agentes Pi
+> IROPI es un agente de codificación AI potenciado con herramientas avanzadas de desarrollo, web scraping, búsqueda web y más. Basado en el excelente proyecto Pi Agent Harness, mejorado y personalizado con nuevas capacidades y documentación completa en español.
 
-Este es el hogar del proyecto del harness de agentes pi, incluyendo nuestro agente de codificación autoextensible.
+---
 
-* **[@earendil-works/pi-coding-agent](packages/coding-agent)**: CLI interactivo del agente de codificación
-* **[@earendil-works/pi-agent-core](packages/agent)**: Runtime del agente con llamada a herramientas y gestión de estado
-* **[@earendil-works/pi-ai](packages/ai)**: API LLM unificada multi-proveedor (OpenAI, Anthropic, Google, …)
+## Características
 
-Para saber más sobre pi:
+- **Agente de codificación interactivo** con interfaz TUI completa en terminal
+- **10 herramientas integradas** incluyendo web scraping, búsqueda web y fetching de URLs
+- **Soporte multi-proveedor** — OpenAI, Anthropic, Google, Mistral, Bedrock, Azure, OpenRouter y más
+- **Sistema de extensiones** para agregar funcionalidades personalizadas
+- **Gestión de sesiones** con persistencia, bifurcación y compactación automática
+- **Documentación completa en español**
+- **Instalación simplificada** con script personalizado
 
-* [Visita pi.dev](https://pi.dev), el sitio web del proyecto con demos
-* [Lee la documentación](https://pi.dev/docs/latest), aunque también puedes pedirle al agente que se explique a sí mismo
+## Herramientas Incluidas
 
-## Comparte tus sesiones de agente de codificación OSS
+| Herramienta | Descripción |
+|-------------|-------------|
+| **read** | Leer archivos y directorios con soporte de rangos de líneas |
+| **bash** | Ejecutar comandos de shell con timeout y gestión de procesos |
+| **edit** | Editar archivos con reemplazo exacto de cadenas |
+| **write** | Escribir y crear archivos nuevos |
+| **grep** | Buscar patrones en archivos con soporte de regex |
+| **find** | Buscar archivos por nombre, patrón o tipo |
+| **ls** | Listar contenido de directorios |
+| **web_fetch** | Obtener contenido de URLs — páginas web, APIs REST, archivos de texto |
+| **web_scrape** | Extraer datos estructurados de páginas web con selectores CSS |
+| **web_search** | Buscar en internet usando DuckDuckGo — títulos, URLs y descripciones |
 
-Si usas pi u otros agentes de codificación para trabajo de código abierto, por favor comparte tus sesiones.
-
-Los datos públicos de sesiones OSS ayudan a mejorar los agentes de codificación con tareas del mundo real, uso de herramientas, fallos y correcciones en lugar de benchmarks de juguete.
-
-Para la explicación completa, consulta [esta publicación en X](https://x.com/badlogicgames/status/2037811643774652911).
-
-Para publicar sesiones, usa [`badlogic/pi-share-hf`](https://github.com/badlogic/pi-share-hf). Lee su README.md para las instrucciones de configuración. Todo lo que necesitas es una cuenta de Hugging Face, la CLI de Hugging Face y `pi-share-hf`.
-
-También puedes ver [este video](https://x.com/badlogicgames/status/2041151967695634619), donde muestro cómo publico mis sesiones de `pi-mono`.
-
-Publico regularmente mis propias sesiones de trabajo de `pi-mono` aquí:
-
-- [badlogicgames/pi-mono en Hugging Face](https://huggingface.co/datasets/badlogicgames/pi-mono)
-
-## Todos los Paquetes
+## Paquetes
 
 | Paquete | Descripción |
 |---------|-------------|
-| **[@earendil-works/pi-ai](packages/ai)** | API LLM unificada multi-proveedor (OpenAI, Anthropic, Google, etc.) |
-| **[@earendil-works/pi-agent-core](packages/agent)** | Runtime del agente con llamada a herramientas y gestión de estado |
-| **[@earendil-works/pi-coding-agent](packages/coding-agent)** | CLI interactivo del agente de codificación |
-| **[@earendil-works/pi-tui](packages/tui)** | Librería de UI de terminal con renderizado diferencial |
+| **@iroennys/iropi-ai** | API LLM unificada multi-proveedor (OpenAI, Anthropic, Google, etc.) |
+| **@iroennys/iropi-agent-core** | Runtime del agente con llamada a herramientas y gestión de estado |
+| **@iroennys/iropi-coding-agent** | CLI interactivo del agente de codificación con todas las herramientas |
+| **@iroennys/iropi-tui** | Librería de UI de terminal con renderizado diferencial |
 
-Para automatización y flujos de trabajo en Slack/chat, consulta [earendil-works/pi-chat](https://github.com/earendil-works/pi-chat).
+Para automatización y flujos de trabajo en Slack/chat, consulta el paquete de chat original en [earendil-works/pi-chat](https://github.com/earendil-works/pi-chat).
+
+## Instalación
+
+### Método Rápido (Recomendado)
+
+```bash
+# Clonar e instalar con el script personalizado
+git clone https://github.com/iroennys-admin/pi.git
+cd pi
+chmod +x install.sh
+./install.sh
+```
+
+### Instalación con npm
+
+```bash
+npm install -g @iroennys/iropi-coding-agent --ignore-scripts
+```
+
+### Instalación con Bun
+
+```bash
+bun install -g @iroennys/iropi-coding-agent --ignore-scripts
+```
+
+### Instalación desde Fuente
+
+```bash
+./install.sh --source
+```
+
+O manualmente:
+
+```bash
+git clone https://github.com/iroennys-admin/pi.git
+cd pi
+npm install --ignore-scripts
+npm run build
+cd packages/coding-agent
+npm link
+```
+
+### Desinstalación
+
+```bash
+./install.sh --uninstall
+# O manualmente:
+npm uninstall -g @iroennys/iropi-coding-agent
+```
+
+## Inicio Rápido
+
+```bash
+# 1. Configura tu API key (elige tu proveedor favorito)
+export GEMINI_API_KEY=tu_key_aquí        # Google Gemini (gratuito)
+export ANTHROPIC_API_KEY=tu_key_aquí      # Claude
+export OPENAI_API_KEY=tu_key_aquí         # OpenAI
+
+# 2. Ejecuta IROPI
+iropi
+
+# 3. ¡Empieza a programar con IA!
+# Ejemplo: "Crea un servidor Express con TypeScript"
+# Ejemplo: "Busca en internet cómo usar la API de GitHub"
+# Ejemplo: "Extrae los títulos de https://news.ycombinator.com"
+```
+
+## Uso de Herramientas Web
+
+### web_fetch — Obtener contenido web
+
+```
+# El agente puede usar web_fetch para leer páginas y APIs:
+> Lee el contenido de https://api.github.com/repos/iroennys-admin/pi
+> Descarga el README de https://example.com
+> Consulta la API REST en https://api.example.com/data
+```
+
+### web_scrape — Extraer datos de páginas web
+
+```
+# Extraer datos estructurados con selectores CSS:
+> Extrae todos los enlaces de https://news.ycombinator.com
+> Scrapea los títulos de la página usando el selector h2.title
+> Obtén todas las imágenes de https://example.com
+> Extrae las tablas de datos de https://example.com/data
+```
+
+### web_search — Buscar en internet
+
+```
+# Búsqueda web directa:
+> Busca en internet cómo configurar Docker con Node.js
+> Busca la documentación de React 19
+> Encuentra tutoriales de TypeScript avanzado
+```
 
 ## Permisos y Contenerización
 
-Pi no incluye un sistema de permisos integrado para restringir el acceso al sistema de archivos, procesos, red o credenciales. Por defecto, se ejecuta con los permisos del usuario y del proceso que lo lanzó.
+IROPI no incluye un sistema de permisos integrado para restringir el acceso al sistema de archivos, procesos, red o credenciales. Por defecto, se ejecuta con los permisos del usuario y del proceso que lo lanzó.
 
-Si necesitas límites más estrictos, conteneriza o aísla Pi en un sandbox. Consulta [packages/coding-agent/docs/containerization.md](packages/coding-agent/docs/containerization.md) para tres patrones:
+Si necesitas límites más estrictos, conteneriza o aísla IROPI en un sandbox. Consulta [packages/coding-agent/docs/containerization.md](packages/coding-agent/docs/containerization.md) para tres patrones:
 
-- **OpenShell**: ejecuta todo el proceso `pi` en un sandbox controlado por políticas.
-- **Extensión Gondolin**: mantiene `pi` y la autenticación del proveedor en el host mientras enruta las herramientas integradas y los comandos `!` hacia una micro-VM local de Linux.
-- **Docker simple**: ejecuta todo el proceso `pi` en un contenedor local para aislamiento sencillo.
-
-## Contribuir
-
-Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para las guías de contribución y [AGENTS.md](AGENTS.md) para las reglas específicas del proyecto (tanto para humanos como para agentes).
+- **OpenShell**: ejecuta todo el proceso en un sandbox controlado por políticas.
+- **Extensión Gondolin**: mantiene IROPI y la autenticación del proveedor en el host mientras enruta las herramientas integradas y los comandos `!` hacia una micro-VM local de Linux.
+- **Docker simple**: ejecuta todo el proceso en un contenedor local para aislamiento sencillo.
 
 ## Desarrollo
 
@@ -77,23 +168,43 @@ npm install --ignore-scripts  # Instalar todas las dependencias sin ejecutar scr
 npm run build        # Construir todos los paquetes
 npm run check        # Lint, formato y verificación de tipos
 ./test.sh            # Ejecutar pruebas (omite las pruebas dependientes de LLM sin claves API)
-./pi-test.sh         # Ejecutar pi desde el código fuente (se puede ejecutar desde cualquier directorio)
+./iropi-test.sh      # Ejecutar IROPI desde el código fuente (se puede ejecutar desde cualquier directorio)
 ```
 
-## Endurecimiento de la cadena de suministro
+## Configuración
 
-Tratamos los cambios en las dependencias npm como cambios de código revisados.
+IROPI guarda su configuración en `~/.iropi/`:
 
-- Las dependencias externas directas están fijadas a versiones exactas. Los paquetes internos del workspace permanecen con versiones por rango.
-- `.npmrc` establece `save-exact=true` y `min-release-age=2` para evitar dependencias del mismo día durante la resolución de npm.
-- `package-lock.json` es la verdad fundamental de las dependencias. El pre-commit bloquea commits accidentales del lockfile a menos que se establezca `PI_ALLOW_LOCKFILE_CHANGE=1`.
-- `npm run check` verifica las dependencias directas fijadas, la compatibilidad de importación nativa de TypeScript y el shrinkwrap generado del coding-agent.
-- El paquete CLI publicado incluye `packages/coding-agent/npm-shrinkwrap.json`, generado a partir del lockfile raíz, para fijar las dependencias transitivas para los usuarios de npm.
-- Las pruebas de humo de release usan `npm run release:local` para construir, empaquetar y crear instalaciones aisladas de npm y Bun fuera del repositorio antes de etiquetar un release.
-- Las instalaciones locales de release, las instalaciones npm documentadas y `pi update --self` usan `--ignore-scripts` donde sea compatible.
-- CI instala con `npm ci --ignore-scripts`, y un flujo de trabajo programado de GitHub ejecuta `npm audit --omit=dev` más `npm audit signatures --omit=dev`.
-- La generación del shrinkwrap tiene una lista de permitidos explícita para los scripts de ciclo de vida de las dependencias; las nuevas dependencias con scripts de ciclo de vida fallan las verificaciones hasta que sean revisadas.
+```
+~/.iropi/
+├── agent/
+│   ├── auth.json          # Claves API y autenticación
+│   ├── settings.json      # Configuración general
+│   ├── models.json        # Modelos disponibles
+│   ├── themes/            # Temas personalizados
+│   ├── sessions/          # Sesiones guardadas
+│   ├── tools/             # Herramientas personalizadas
+│   └── prompts/           # Plantillas de prompts
+└── bin/                   # Binarios gestionados (fd, rg)
+```
+
+### Variables de Entorno
+
+| Variable | Descripción |
+|----------|-------------|
+| `GEMINI_API_KEY` | API key de Google Gemini |
+| `ANTHROPIC_API_KEY` | API key de Anthropic Claude |
+| `OPENAI_API_KEY` | API key de OpenAI |
+| `MISTRAL_API_KEY` | API key de Mistral |
+| `IROPI_CODING_AGENT_DIR` | Directorio de configuración personalizado |
+| `IROPI_CACHE_RETENTION` | Retención de caché: "short" o "long" |
+
+## Contribuir
+
+Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para las guías de contribución y [AGENTS.md](AGENTS.md) para las reglas específicas del proyecto.
 
 ## Licencia
 
-MIT
+MIT — Creado por [iroennys-admin](https://github.com/iroennys-admin)
+
+Basado en [Pi Agent Harness](https://github.com/earendil-works/pi) por Mario Zechner, publicado bajo licencia MIT.

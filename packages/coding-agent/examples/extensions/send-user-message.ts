@@ -11,11 +11,11 @@
  *   /followup And then?   - Sends while streaming with followUp delivery
  */
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@iroennys/iropi-coding-agent";
 
-export default function (pi: ExtensionAPI) {
+export default function (iropi: ExtensionAPI) {
 	// Simple command that sends a user message
-	pi.registerCommand("ask", {
+	iropi.registerCommand("ask", {
 		description: "Send a user message to the agent",
 		handler: async (args, ctx) => {
 			if (!args.trim()) {
@@ -35,7 +35,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Command that steers the agent mid-conversation
-	pi.registerCommand("steer", {
+	iropi.registerCommand("steer", {
 		description: "Send a steering message (interrupts current processing)",
 		handler: async (args, ctx) => {
 			if (!args.trim()) {
@@ -54,7 +54,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Command that queues a follow-up message
-	pi.registerCommand("followup", {
+	iropi.registerCommand("followup", {
 		description: "Queue a follow-up message (waits for current processing)",
 		handler: async (args, ctx) => {
 			if (!args.trim()) {
@@ -74,7 +74,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Example with content array (text + images would go here)
-	pi.registerCommand("askwith", {
+	iropi.registerCommand("askwith", {
 		description: "Send a user message with structured content",
 		handler: async (args, ctx) => {
 			if (!args.trim()) {

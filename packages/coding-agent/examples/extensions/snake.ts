@@ -2,8 +2,8 @@
  * Snake game extension - play snake with /snake command
  */
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { matchesKey, visibleWidth } from "@earendil-works/pi-tui";
+import type { ExtensionAPI } from "@iroennys/iropi-coding-agent";
+import { matchesKey, visibleWidth } from "@iroennys/iropi-tui";
 
 const GAME_WIDTH = 40;
 const GAME_HEIGHT = 15;
@@ -306,8 +306,8 @@ class SnakeComponent {
 
 const SNAKE_SAVE_TYPE = "snake-save";
 
-export default function (pi: ExtensionAPI) {
-	pi.registerCommand("snake", {
+export default function (iropi: ExtensionAPI) {
+	iropi.registerCommand("snake", {
 		description: "Play Snake!",
 
 		handler: async (_args, ctx) => {

@@ -6,8 +6,8 @@
  * and can be activated via CLI flag, /preset command, or Ctrl+Shift+U to cycle.
  *
  * Config files (merged, project takes precedence):
- * - ~/.pi/agent/presets.json (global)
- * - <cwd>/.pi/presets.json (project-local)
+ * - ~/.iropi/agent/presets.json (global)
+ * - <cwd>/.iropi/presets.json (project-local)
  *
  * Example presets.json:
  * ```json
@@ -40,10 +40,10 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { Api, Model } from "@earendil-works/pi-ai";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { DynamicBorder, getAgentDir } from "@earendil-works/pi-coding-agent";
-import { Container, Key, type SelectItem, SelectList, Text } from "@earendil-works/pi-tui";
+import type { Api, Model } from "@iroennys/iropi-ai";
+import type { ExtensionAPI, ExtensionContext } from "@iroennys/iropi-coding-agent";
+import { DynamicBorder, getAgentDir } from "@iroennys/iropi-coding-agent";
+import { Container, Key, type SelectItem, SelectList, Text } from "@iroennys/iropi-tui";
 
 // Preset configuration
 interface Preset {
@@ -69,7 +69,7 @@ interface PresetsConfig {
  */
 function loadPresets(cwd: string): PresetsConfig {
 	const globalPath = join(getAgentDir(), "presets.json");
-	const projectPath = join(cwd, ".pi", "presets.json");
+	const projectPath = join(cwd, ".iropi", "presets.json");
 
 	let globalPresets: PresetsConfig = {};
 	let projectPresets: PresetsConfig = {};
@@ -104,14 +104,14 @@ interface OriginalState {
 	tools: string[];
 }
 
-export default function presetExtension(pi: ExtensionAPI) {
+export default function presetExtension(iropi: ExtensionAPI) {
 	let presets: PresetsConfig = {};
 	let activePresetName: string | undefined;
 	let activePreset: Preset | undefined;
 	let originalState: OriginalState | undefined;
 
 	// Register --preset CLI flag
-	pi.registerFlag("preset", {
+	iropi.registerFlag("preset", {
 		description: "Preset configuration to use",
 		type: "string",
 	});
@@ -200,7 +200,10 @@ export default function presetExtension(pi: ExtensionAPI) {
 		const presetNames = Object.keys(presets);
 
 		if (presetNames.length === 0) {
-			ctx.ui.notify("No presets defined. Add presets to ~/.pi/agent/presets.json or .pi/presets.json", "warning");
+			ctx.ui.notify(
+				"No presets defined. Add presets to ~/.iropi/agent/presets.json or .iropi/presets.json",
+				"warning",
+			);
 			return;
 		}
 
@@ -308,7 +311,10 @@ export default function presetExtension(pi: ExtensionAPI) {
 	async function cyclePreset(ctx: ExtensionContext): Promise<void> {
 		const presetNames = getPresetOrder();
 		if (presetNames.length === 0) {
-			ctx.ui.notify("No presets defined. Add presets to ~/.pi/agent/presets.json or .pi/presets.json", "warning");
+			ctx.ui.notify(
+				"No presets defined. Add presets to ~/.iropi/agent/presets.json or .iropi/presets.json",
+				"warning",
+			);
 			return;
 		}
 
@@ -343,7 +349,7 @@ export default function presetExtension(pi: ExtensionAPI) {
 		updateStatus(ctx);
 	}
 
-	pi.registerShortcut(Key.ctrlShift("u"), {
+	iropi.registerShortcut(Key.ctrlShift("u"), {
 		description: "Cycle presets",
 		handler: async (ctx) => {
 			await cyclePreset(ctx);
@@ -351,7 +357,7 @@ export default function presetExtension(pi: ExtensionAPI) {
 	});
 
 	// Register /preset command
-	pi.registerCommand("preset", {
+	iropi.registerCommand("preset", {
 		description: "Switch preset configuration",
 		handler: async (args, ctx) => {
 			// If preset name provided, apply directly
@@ -377,7 +383,7 @@ export default function presetExtension(pi: ExtensionAPI) {
 	});
 
 	// Inject preset instructions into system prompt
-	pi.on("before_agent_start", async (event) => {
+	iropi.on("before_agent_start", async (event) => {
 		if (activePreset?.instructions) {
 			return {
 				systemPrompt: `${event.systemPrompt}\n\n${activePreset.instructions}`,
@@ -386,7 +392,7 @@ export default function presetExtension(pi: ExtensionAPI) {
 	});
 
 	// Initialize on session start
-	pi.on("session_start", async (_event, ctx) => {
+	iropi.on("session_start", async (_event, ctx) => {
 		// Load presets from config files
 		presets = loadPresets(ctx.cwd);
 
@@ -422,7 +428,7 @@ export default function presetExtension(pi: ExtensionAPI) {
 	});
 
 	// Persist preset state
-	pi.on("turn_start", async () => {
+	iropi.on("turn_start", async () => {
 		if (activePresetName) {
 			pi.appendEntry("preset-state", { name: activePresetName });
 		}

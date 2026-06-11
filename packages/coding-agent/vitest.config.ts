@@ -19,14 +19,14 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: [
-			{ find: /^@earendil-works\/pi-ai$/, replacement: aiSrcIndex },
-			{ find: /^@earendil-works\/pi-ai\/oauth$/, replacement: aiSrcOAuth },
-			{ find: /^@earendil-works\/pi-agent-core$/, replacement: agentSrcIndex },
-			{ find: /^@earendil-works\/pi-tui$/, replacement: tuiSrcIndex },
-			{ find: /^@mariozechner\/pi-ai$/, replacement: aiSrcIndex },
-			{ find: /^@mariozechner\/pi-ai\/oauth$/, replacement: aiSrcOAuth },
-			{ find: /^@mariozechner\/pi-agent-core$/, replacement: agentSrcIndex },
-			{ find: /^@mariozechner\/pi-tui$/, replacement: tuiSrcIndex },
+			{ find: /^@iroennys\/iropi-ai$/, replacement: aiSrcIndex },
+			{ find: /^@iroennys\/iropi-ai\/oauth$/, replacement: aiSrcOAuth },
+			{ find: /^@iroennys\/iropi-agent-core$/, replacement: agentSrcIndex },
+			{ find: /^@iroennys\/iropi-tui$/, replacement: tuiSrcIndex },
+			{ find: /^@mariozechner\/iropi-ai$/, replacement: aiSrcIndex },
+			{ find: /^@mariozechner\/iropi-ai\/oauth$/, replacement: aiSrcOAuth },
+			{ find: /^@mariozechner\/iropi-agent-core$/, replacement: agentSrcIndex },
+			{ find: /^@mariozechner\/iropi-tui$/, replacement: tuiSrcIndex },
 		],
 	},
 });

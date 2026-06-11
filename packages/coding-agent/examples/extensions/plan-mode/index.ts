@@ -12,10 +12,10 @@
  * - Progress tracking widget during execution
  */
 
-import type { AgentMessage } from "@earendil-works/pi-agent-core";
-import type { AssistantMessage, TextContent } from "@earendil-works/pi-ai";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { Key } from "@earendil-works/pi-tui";
+import type { AgentMessage } from "@iroennys/iropi-agent-core";
+import type { AssistantMessage, TextContent } from "@iroennys/iropi-ai";
+import type { ExtensionAPI, ExtensionContext } from "@iroennys/iropi-coding-agent";
+import { Key } from "@iroennys/iropi-tui";
 import { extractTodoItems, isSafeCommand, markCompletedSteps, type TodoItem } from "./utils.ts";
 
 // Tools
@@ -35,12 +35,12 @@ function getTextContent(message: AssistantMessage): string {
 		.join("\n");
 }
 
-export default function planModeExtension(pi: ExtensionAPI): void {
+export default function planModeExtension(iropi: ExtensionAPI): void {
 	let planModeEnabled = false;
 	let executionMode = false;
 	let todoItems: TodoItem[] = [];
 
-	pi.registerFlag("plan", {
+	iropi.registerFlag("plan", {
 		description: "Start in plan mode (read-only exploration)",
 		type: "boolean",
 		default: false,
@@ -96,12 +96,12 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 		});
 	}
 
-	pi.registerCommand("plan", {
+	iropi.registerCommand("plan", {
 		description: "Toggle plan mode (read-only exploration)",
 		handler: async (_args, ctx) => togglePlanMode(ctx),
 	});
 
-	pi.registerCommand("todos", {
+	iropi.registerCommand("todos", {
 		description: "Show current plan todo list",
 		handler: async (_args, ctx) => {
 			if (todoItems.length === 0) {
@@ -113,13 +113,13 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 		},
 	});
 
-	pi.registerShortcut(Key.ctrlAlt("p"), {
+	iropi.registerShortcut(Key.ctrlAlt("p"), {
 		description: "Toggle plan mode",
 		handler: async (ctx) => togglePlanMode(ctx),
 	});
 
 	// Block destructive bash commands in plan mode
-	pi.on("tool_call", async (event) => {
+	iropi.on("tool_call", async (event) => {
 		if (!planModeEnabled || event.toolName !== "bash") return;
 
 		const command = event.input.command as string;
@@ -132,7 +132,7 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 	});
 
 	// Filter out stale plan mode context when not in plan mode
-	pi.on("context", async (event) => {
+	iropi.on("context", async (event) => {
 		if (planModeEnabled) return;
 
 		return {
@@ -156,7 +156,7 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 	});
 
 	// Inject plan/execution context before agent starts
-	pi.on("before_agent_start", async () => {
+	iropi.on("before_agent_start", async () => {
 		if (planModeEnabled) {
 			return {
 				message: {
@@ -205,7 +205,7 @@ After completing a step, include a [DONE:n] tag in your response.`,
 	});
 
 	// Track progress after each turn
-	pi.on("turn_end", async (event, ctx) => {
+	iropi.on("turn_end", async (event, ctx) => {
 		if (!executionMode || todoItems.length === 0) return;
 		if (!isAssistantMessage(event.message)) return;
 
@@ -217,7 +217,7 @@ After completing a step, include a [DONE:n] tag in your response.`,
 	});
 
 	// Handle plan completion and plan mode UI
-	pi.on("agent_end", async (event, ctx) => {
+	iropi.on("agent_end", async (event, ctx) => {
 		// Check if execution is complete
 		if (executionMode && todoItems.length > 0) {
 			if (todoItems.every((t) => t.completed)) {
@@ -288,7 +288,7 @@ After completing a step, include a [DONE:n] tag in your response.`,
 	});
 
 	// Restore state on session start/resume
-	pi.on("session_start", async (_event, ctx) => {
+	iropi.on("session_start", async (_event, ctx) => {
 		if (pi.getFlag("plan") === true) {
 			planModeEnabled = true;
 		}

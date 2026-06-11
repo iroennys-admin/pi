@@ -7,10 +7,10 @@
  * Usage: /session-name [name] - set or show session name
  */
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@iroennys/iropi-coding-agent";
 
-export default function (pi: ExtensionAPI) {
-	pi.registerCommand("session-name", {
+export default function (iropi: ExtensionAPI) {
+	iropi.registerCommand("session-name", {
 		description: "Set or show session name (usage: /session-name [new name])",
 		handler: async (args, ctx) => {
 			const name = args.trim();

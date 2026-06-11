@@ -1,6 +1,6 @@
-# Contribuir a pi
+# Contribuir a IROPI
 
-Esta guía existe para ahorrar tiempo a ambas partes.
+Esta guía existe para ahorrar tiempo a ambas partes y asegurar que las contribuciones sean de alta calidad.
 
 ## La Única Regla
 
@@ -8,48 +8,16 @@ Esta guía existe para ahorrar tiempo a ambas partes.
 
 Usar IA para escribir código está bien. Enviar código generado por IA sin entenderlo no lo está.
 
-Si usas un agente, ejecútalo desde el directorio raíz de `pi-mono` para que recoja `AGENTS.md` automáticamente. Tu agente debe seguir las reglas y directrices de ese archivo.
+Si usas un agente, ejecútalo desde el directorio raíz del repositorio para que recoja `AGENTS.md` automáticamente. Tu agente debe seguir las reglas y directrices de ese archivo.
 
-## Puerta de Contribución
+## Cómo Contribuir
 
-Todos los issues y PRs de nuevos colaboradores se cierran automáticamente por defecto.
+1. **Fork** este repositorio
+2. Crea una **rama** para tu feature: `git checkout -b feature/mi-mejora`
+3. Haz tus cambios y **prueba** que funcionen
+4. Envía un **Pull Request** con una descripción clara
 
-Los issues enviados entre viernes y domingo no se revisan. Si algo es urgente, pregunta en Discord: https://discord.com/invite/3cU7Bz4UPx
-
-Los mantenedores revisan los issues cerrados automáticamente a diario y reabren los que valen la pena. Los issues que no cumplan con el estándar de calidad a continuación no serán reabiertos ni recibirán respuesta.
-
-La aprobación ocurre a través de respuestas de los mantenedores en los issues:
-
-- `lgtmi`: tus futuros issues no se cerrarán automáticamente
-- `lgtm`: tus futuros issues y PRs no se cerrarán automáticamente
-
-`lgtmi` no otorga derechos para enviar PRs. Solo `lgtm` otorga derechos para enviar PRs.
-
-## Estándar de Calidad para Issues
-
-Si abres un issue, debes usar una de las dos plantillas de issues de GitHub.
-
-Si abres un issue, manténlo breve, concreto y que valga la pena leer.
-
-- Sé conciso. Si no cabe en una pantalla, es demasiado largo.
-- Escribe con tu propia voz.
-- Explica el bug o la solicitud claramente.
-- Explica por qué importa.
-- Si quieres implementar el cambio tú mismo, dilo.
-
-Si el issue es real y está bien escrito, un mantenedor puede reabrirlo, responder `lgtmi` o responder `lgtm`.
-
-## Bloqueos
-
-Si ignoras este documento dos veces, o si inundas el tracker con issues generados por agentes, tu cuenta de GitHub será bloqueada permanentemente.
-
-Si envías un gran volumen de issues a través de automatización, tu cuenta de GitHub será bloqueada permanentemente. Sin marcha atrás.
-
-## Antes de Enviar un PR
-
-No abras un PR a menos que ya hayas sido aprobado con `lgtm`.
-
-Antes de enviar un PR:
+### Antes de Enviar un PR
 
 ```bash
 npm run check
@@ -60,34 +28,52 @@ Ambos deben pasar.
 
 No edites `CHANGELOG.md`. Las entradas del changelog las añaden los mantenedores.
 
-Si estás añadiendo un nuevo proveedor a `packages/ai`, consulta `AGENTS.md` para las pruebas requeridas.
+## Estándar de Calidad para Issues
 
-## Filosofía
+Si abres un issue, debes usar una de las plantillas de issues de GitHub.
 
-El núcleo de pi es mínimo. Si tu función no pertenece al núcleo, debería ser una extensión. Los PRs que hinchen el núcleo probablemente serán rechazados.
+- Sé conciso. Si no cabe en una pantalla, es demasiado largo.
+- Escribe con tu propia voz.
+- Explica el bug o la solicitud claramente.
+- Explica por qué importa.
+- Si quieres implementar el cambio tú mismo, dilo.
 
-## ¿Preguntas?
+## Filosofía del Proyecto
 
-Pregunta en [Discord](https://discord.com/invite/nKXTsAcmbT).
+El núcleo de IROPI es mínimo. Si tu función no pertenece al núcleo, debería ser una extensión. PRs que hinchen el núcleo probablemente serán rechazados.
+
+### Agregar Nuevas Herramientas
+
+Si deseas agregar una herramienta nueva, sigue el patrón de las herramientas existentes en `packages/coding-agent/src/core/tools/`:
+
+1. Crea un archivo `mi-herramienta.ts` con `createMiHerramientaTool()` y `createMiHerramientaToolDefinition()`
+2. Usa typebox para definir el esquema de parámetros
+3. Registra la herramienta en `index.ts`
+4. Agrega las descripciones en español
+5. Incluye pruebas
+
+## Guía de Estilo
+
+- **Idioma**: Las descripciones de herramientas y mensajes de usuario deben estar en español
+- **Código**: Nombres de variables y funciones en inglés
+- **Commits**: Formato `{feat,fix,docs}[(ai,tui,agent,coding-agent)]: descripción`
+- **Sin emojis** en commits, issues, PRs o código
 
 ## Preguntas Frecuentes
 
-### ¿Por qué los nuevos issues y PRs se cierran automáticamente?
+### ¿Puedo usar IA para contribuir?
 
-pi recibe más issues de los que los mantenedores pueden revisar responsablemente en tiempo real. Muchos reportes no cumplen con el estándar de calidad de esta guía o no siguen CONTRIBUTING.md. Algunos se lanzan al repositorio de forma mecánica a través de un agente en lugar de ser revisados y formados por la persona que los envía. El cierre automático crea un buffer para que los mantenedores puedan revisar el tracker a su propio ritmo y reabrir los issues que cumplan con el estándar de calidad.
+Sí, siempre y cuando entiendas completamente los cambios que estás enviando. Los PRs que contengan código generado por IA sin comprensión serán cerrados.
 
-### ¿Por qué no se revisan los issues del fin de semana?
+### ¿Cómo reporto un bug?
 
-Los mantenedores necesitan tiempo ininterrumpido lejos del tracker de issues. Los issues enviados entre viernes y domingo se cierran automáticamente y no forman parte de la cola de revisión del lunes. Si un problema es urgente, pregunta en Discord e incluye la versión corta, un repro y los logs relevantes.
+Abre un issue usando la plantilla de bug report. Incluye pasos para reproducir, comportamiento esperado y comportamiento actual.
 
-### ¿Por qué algunos issues no reciben respuesta?
+### ¿Cómo sugiero una nueva herramienta?
 
-Una respuesta también es trabajo de mantenimiento. Los issues de baja señal, reportes poco claros, duplicados e issues que no siguen esta guía pueden cerrarse sin discusión. Esto mantiene el tiempo disponible para bugs reproducibles, solicitudes reflexivas y colaboradores que han hecho el trabajo para hacer su reporte accionable.
+Abre un issue con la etiqueta "enhancement" describiendo la herramienta, su caso de uso y cómo beneficiaría al proyecto.
 
-### ¿Por qué no dejar que la IA triage todo?
+## Contacto
 
-La IA puede ayudar a agrupar duplicados, resumir reportes y detectar información faltante. No se confía en ella para tomar decisiones finales de los mantenedores. Los issues generados por IA pulidos aún pueden estar equivocados, ser engañosos o costosos de investigar. La revisión humana sigue siendo la puerta final.
-
-### ¿Es esto hostil para los colaboradores?
-
-No. Es una barrera de protección contra el burnout y el spam en el tracker. Los issues breves, concretos y reproducibles son bienvenidos. Las contribuciones reflexivas son bienvenidas. El código automatizado sin sentido, la sensación de entitlement y los grandes volúmenes de reportes de bajo esfuerzo no lo son.
+- **Issues**: [GitHub Issues](https://github.com/iroennys-admin/pi/issues)
+- **Repositorio**: [github.com/iroennys-admin/pi](https://github.com/iroennys-admin/pi)

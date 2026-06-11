@@ -61,6 +61,27 @@ export {
 	truncateTail,
 } from "./truncate.ts";
 export {
+	createWebFetchTool,
+	createWebFetchToolDefinition,
+	type WebFetchToolDetails,
+	type WebFetchToolInput,
+	type WebFetchToolOptions,
+} from "./web-fetch.ts";
+export {
+	createWebScrapeTool,
+	createWebScrapeToolDefinition,
+	type WebScrapeToolDetails,
+	type WebScrapeToolInput,
+	type WebScrapeToolOptions,
+} from "./web-scrape.ts";
+export {
+	createWebSearchTool,
+	createWebSearchToolDefinition,
+	type WebSearchToolDetails,
+	type WebSearchToolInput,
+	type WebSearchToolOptions,
+} from "./web-search.ts";
+export {
 	createWriteTool,
 	createWriteToolDefinition,
 	type WriteOperations,
@@ -68,7 +89,7 @@ export {
 	type WriteToolOptions,
 } from "./write.ts";
 
-import type { AgentTool } from "@earendil-works/pi-agent-core";
+import type { AgentTool } from "@iroennys/iropi-agent-core";
 import type { ToolDefinition } from "../extensions/types.ts";
 import { type BashToolOptions, createBashTool, createBashToolDefinition } from "./bash.ts";
 import { createEditTool, createEditToolDefinition, type EditToolOptions } from "./edit.ts";
@@ -76,12 +97,36 @@ import { createFindTool, createFindToolDefinition, type FindToolOptions } from "
 import { createGrepTool, createGrepToolDefinition, type GrepToolOptions } from "./grep.ts";
 import { createLsTool, createLsToolDefinition, type LsToolOptions } from "./ls.ts";
 import { createReadTool, createReadToolDefinition, type ReadToolOptions } from "./read.ts";
+import { createWebFetchTool, createWebFetchToolDefinition, type WebFetchToolOptions } from "./web-fetch.ts";
+import { createWebScrapeTool, createWebScrapeToolDefinition, type WebScrapeToolOptions } from "./web-scrape.ts";
+import { createWebSearchTool, createWebSearchToolDefinition, type WebSearchToolOptions } from "./web-search.ts";
 import { createWriteTool, createWriteToolDefinition, type WriteToolOptions } from "./write.ts";
 
 export type Tool = AgentTool<any>;
 export type ToolDef = ToolDefinition<any, any>;
-export type ToolName = "read" | "bash" | "edit" | "write" | "grep" | "find" | "ls";
-export const allToolNames: Set<ToolName> = new Set(["read", "bash", "edit", "write", "grep", "find", "ls"]);
+export type ToolName =
+	| "read"
+	| "bash"
+	| "edit"
+	| "write"
+	| "grep"
+	| "find"
+	| "ls"
+	| "web_fetch"
+	| "web_scrape"
+	| "web_search";
+export const allToolNames: Set<ToolName> = new Set([
+	"read",
+	"bash",
+	"edit",
+	"write",
+	"grep",
+	"find",
+	"ls",
+	"web_fetch",
+	"web_scrape",
+	"web_search",
+]);
 
 export interface ToolsOptions {
 	read?: ReadToolOptions;
@@ -91,6 +136,9 @@ export interface ToolsOptions {
 	grep?: GrepToolOptions;
 	find?: FindToolOptions;
 	ls?: LsToolOptions;
+	web_fetch?: WebFetchToolOptions;
+	web_scrape?: WebScrapeToolOptions;
+	web_search?: WebSearchToolOptions;
 }
 
 export function createToolDefinition(toolName: ToolName, cwd: string, options?: ToolsOptions): ToolDef {
@@ -109,6 +157,12 @@ export function createToolDefinition(toolName: ToolName, cwd: string, options?: 
 			return createFindToolDefinition(cwd, options?.find);
 		case "ls":
 			return createLsToolDefinition(cwd, options?.ls);
+		case "web_fetch":
+			return createWebFetchToolDefinition(cwd, options?.web_fetch);
+		case "web_scrape":
+			return createWebScrapeToolDefinition(cwd, options?.web_scrape);
+		case "web_search":
+			return createWebSearchToolDefinition(cwd, options?.web_search);
 		default:
 			throw new Error(`Unknown tool name: ${toolName}`);
 	}
@@ -130,6 +184,12 @@ export function createTool(toolName: ToolName, cwd: string, options?: ToolsOptio
 			return createFindTool(cwd, options?.find);
 		case "ls":
 			return createLsTool(cwd, options?.ls);
+		case "web_fetch":
+			return createWebFetchTool(cwd, options?.web_fetch);
+		case "web_scrape":
+			return createWebScrapeTool(cwd, options?.web_scrape);
+		case "web_search":
+			return createWebSearchTool(cwd, options?.web_search);
 		default:
 			throw new Error(`Unknown tool name: ${toolName}`);
 	}
@@ -141,6 +201,8 @@ export function createCodingToolDefinitions(cwd: string, options?: ToolsOptions)
 		createBashToolDefinition(cwd, options?.bash),
 		createEditToolDefinition(cwd, options?.edit),
 		createWriteToolDefinition(cwd, options?.write),
+		createWebFetchToolDefinition(cwd, options?.web_fetch),
+		createWebScrapeToolDefinition(cwd, options?.web_scrape),
 	];
 }
 
@@ -150,6 +212,7 @@ export function createReadOnlyToolDefinitions(cwd: string, options?: ToolsOption
 		createGrepToolDefinition(cwd, options?.grep),
 		createFindToolDefinition(cwd, options?.find),
 		createLsToolDefinition(cwd, options?.ls),
+		createWebSearchToolDefinition(cwd, options?.web_search),
 	];
 }
 
@@ -162,6 +225,9 @@ export function createAllToolDefinitions(cwd: string, options?: ToolsOptions): R
 		grep: createGrepToolDefinition(cwd, options?.grep),
 		find: createFindToolDefinition(cwd, options?.find),
 		ls: createLsToolDefinition(cwd, options?.ls),
+		web_fetch: createWebFetchToolDefinition(cwd, options?.web_fetch),
+		web_scrape: createWebScrapeToolDefinition(cwd, options?.web_scrape),
+		web_search: createWebSearchToolDefinition(cwd, options?.web_search),
 	};
 }
 
@@ -171,6 +237,8 @@ export function createCodingTools(cwd: string, options?: ToolsOptions): Tool[] {
 		createBashTool(cwd, options?.bash),
 		createEditTool(cwd, options?.edit),
 		createWriteTool(cwd, options?.write),
+		createWebFetchTool(cwd, options?.web_fetch),
+		createWebScrapeTool(cwd, options?.web_scrape),
 	];
 }
 
@@ -180,6 +248,7 @@ export function createReadOnlyTools(cwd: string, options?: ToolsOptions): Tool[]
 		createGrepTool(cwd, options?.grep),
 		createFindTool(cwd, options?.find),
 		createLsTool(cwd, options?.ls),
+		createWebSearchTool(cwd, options?.web_search),
 	];
 }
 
@@ -192,5 +261,8 @@ export function createAllTools(cwd: string, options?: ToolsOptions): Record<Tool
 		grep: createGrepTool(cwd, options?.grep),
 		find: createFindTool(cwd, options?.find),
 		ls: createLsTool(cwd, options?.ls),
+		web_fetch: createWebFetchTool(cwd, options?.web_fetch),
+		web_scrape: createWebScrapeTool(cwd, options?.web_scrape),
+		web_search: createWebSearchTool(cwd, options?.web_search),
 	};
 }

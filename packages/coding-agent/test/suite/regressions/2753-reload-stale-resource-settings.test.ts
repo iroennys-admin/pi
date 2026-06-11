@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { registerFauxProvider } from "@earendil-works/pi-ai";
+import { registerFauxProvider } from "@iroennys/iropi-ai";
 import { afterEach, describe, expect, it } from "vitest";
 import {
 	type CreateAgentSessionRuntimeFactory,
@@ -41,8 +41,8 @@ describe("issue #2753 reload stale resource settings", () => {
 				authStorage,
 				resourceLoaderOptions: {
 					extensionFactories: [
-						(pi) => {
-							pi.registerProvider(faux.getModel().provider, {
+						(iropi) => {
+							iropi.registerProvider(faux.getModel().provider, {
 								baseUrl: faux.getModel().baseUrl,
 								apiKey: "faux-key",
 								api: faux.api,

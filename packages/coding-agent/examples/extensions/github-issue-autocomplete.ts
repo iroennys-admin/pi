@@ -1,13 +1,13 @@
 // Requires GitHub CLI (`gh`) and a GitHub repository checkout.
 // Preloads the latest open issues once per session, then filters them locally for fast `#...` completion.
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@iroennys/iropi-coding-agent";
 import {
 	type AutocompleteItem,
 	type AutocompleteProvider,
 	type AutocompleteSuggestions,
 	fuzzyFilter,
-} from "@earendil-works/pi-tui";
+} from "@iroennys/iropi-tui";
 
 type GitHubIssue = {
 	number: number;
@@ -40,7 +40,7 @@ function parseGitHubRepo(remoteUrl: string): string | undefined {
 }
 
 async function resolveGitHubRepo(pi: ExtensionAPI, cwd: string): Promise<RepoResolution> {
-	const result = await pi.exec("git", ["remote", "-v"], { cwd, timeout: 5_000 });
+	const result = await iropi.exec("git", ["remote", "-v"], { cwd, timeout: 5_000 });
 	if (result.code !== 0) {
 		return { ok: false, error: "github-issue-autocomplete: cwd is not a git repository" };
 	}
@@ -127,8 +127,8 @@ function createIssueAutocompleteProvider(
 	};
 }
 
-export default function (pi: ExtensionAPI): void {
-	pi.on("session_start", async (_event, ctx) => {
+export default function (iropi: ExtensionAPI): void {
+	iropi.on("session_start", async (_event, ctx) => {
 		const resolvedRepo = await resolveGitHubRepo(pi, ctx.cwd);
 		if (!resolvedRepo.ok) {
 			ctx.ui.notify(resolvedRepo.error, "error");
@@ -141,7 +141,7 @@ export default function (pi: ExtensionAPI): void {
 
 		const getIssues = async (): Promise<GitHubIssue[] | undefined> => {
 			issuesPromise ||= (async () => {
-				const result = await pi.exec(
+				const result = await iropi.exec(
 					"gh",
 					[
 						"issue",

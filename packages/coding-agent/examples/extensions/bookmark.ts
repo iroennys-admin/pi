@@ -7,10 +7,10 @@
  * Usage: /bookmark [label] - bookmark the last assistant message
  */
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@iroennys/iropi-coding-agent";
 
-export default function (pi: ExtensionAPI) {
-	pi.registerCommand("bookmark", {
+export default function (iropi: ExtensionAPI) {
+	iropi.registerCommand("bookmark", {
 		description: "Bookmark last message (usage: /bookmark [label])",
 		handler: async (args, ctx) => {
 			const label = args.trim() || `bookmark-${Date.now()}`;
@@ -31,7 +31,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Remove bookmark
-	pi.registerCommand("unbookmark", {
+	iropi.registerCommand("unbookmark", {
 		description: "Remove bookmark from last labeled entry",
 		handler: async (_args, ctx) => {
 			const entries = ctx.sessionManager.getEntries();

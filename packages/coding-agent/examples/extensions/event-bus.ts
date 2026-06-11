@@ -7,13 +7,13 @@
  * Usage: /emit [event-name] [data] - emit an event on the bus
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@iroennys/iropi-coding-agent";
 
-export default function (pi: ExtensionAPI) {
+export default function (iropi: ExtensionAPI) {
 	// Store ctx for use in event handler
 	let currentCtx: ExtensionContext | undefined;
 
-	pi.on("session_start", async (_event, ctx) => {
+	iropi.on("session_start", async (_event, ctx) => {
 		currentCtx = ctx;
 	});
 
@@ -24,7 +24,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Command to emit events (emits "my:notification" which the listener above receives)
-	pi.registerCommand("emit", {
+	iropi.registerCommand("emit", {
 		description: "Emit my:notification event (usage: /emit message)",
 		handler: async (args, _ctx) => {
 			const message = args.trim() || "hello";
@@ -34,7 +34,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Example: emit on session start
-	pi.on("session_start", async () => {
+	iropi.on("session_start", async () => {
 		pi.events.emit("my:notification", {
 			message: "Session started",
 			from: "event-bus-example",

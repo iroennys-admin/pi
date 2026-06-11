@@ -52,14 +52,14 @@ Configure Pi to use the corresponding OpenAI-compatible or Anthropic-compatible 
 
 ## Gondolin
 
-[Gondolin](https://github.com/earendil-works/gondolin) is a local Linux micro-VM.
+[Gondolin](https://github.com/iroennys-admin/gondolin) is a local Linux micro-VM.
 Use the [example extension](../examples/extensions/gondolin) when you want `pi` on the host but all built-in tools routed into the VM.
 
 Setup:
 
 ```bash
-cp -R packages/coding-agent/examples/extensions/gondolin ~/.pi/agent/extensions/gondolin
-cd ~/.pi/agent/extensions/gondolin
+cp -R packages/coding-agent/examples/extensions/gondolin ~/.iropi/agent/extensions/gondolin
+cd ~/.iropi/agent/extensions/gondolin
 npm install --ignore-scripts
 ```
 
@@ -67,20 +67,20 @@ Run from the project you want mounted:
 
 ```bash
 cd /path/to/project
-pi -e ~/.pi/agent/extensions/gondolin
+pi -e ~/.iropi/agent/extensions/gondolin
 ```
 
 The extension mounts the host cwd at `/workspace` in the VM and overrides `read`, `write`, `edit`, `bash`, `grep`, `find`, and `ls`.
 User `!` commands are routed into the VM, as well.
 File changes under `/workspace` write through to the host.
 
-Requirements: Node.js >= 23.6.0 for `@earendil-works/gondolin`, plus QEMU (requires installation through your package manager).
+Requirements: Node.js >= 23.6.0 for `@iroennys-admin/gondolin`, plus QEMU (requires installation through your package manager).
 
 ## Plain Docker
 
 Run the whole `pi` process in Docker when you want the simplest local container boundary.
 
-`Dockerfile.pi`:
+`Dockerfile.iropi`:
 
 ```dockerfile
 FROM node:24-bookworm-slim
@@ -88,7 +88,7 @@ FROM node:24-bookworm-slim
 RUN apt-get update \
   && apt-get install -y --no-install-recommends bash ca-certificates git ripgrep \
   && rm -rf /var/lib/apt/lists/*
-RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+RUN npm install -g --ignore-scripts @iroennys/iropi-coding-agent
 
 WORKDIR /workspace
 ENTRYPOINT ["pi"]
@@ -97,15 +97,15 @@ ENTRYPOINT ["pi"]
 Build and run:
 
 ```bash
-docker build -t pi-sandbox -f Dockerfile.pi .
+docker build -t pi-sandbox -f Dockerfile.iropi .
 
 docker run --rm -it \
   -e ANTHROPIC_API_KEY \
   -v "$PWD:/workspace" \
-  -v pi-agent-home:/root/.pi/agent \
+  -v pi-agent-home:/root/.iropi/agent \
   pi-sandbox
 ```
 
 The `-v "$PWD:/workspace"` mounts your current directory into the container at /workspace such that reads and writes in `/workspace` inside Docker directly affect your host files, like in the Gondolin example.
 
-Use a named volume for `/root/.pi/agent` if you want container-local settings and sessions. Mounting your host `~/.pi/agent` exposes host auth and session files to the container.
+Use a named volume for `/root/.iropi/agent` if you want container-local settings and sessions. Mounting your host `~/.iropi/agent` exposes host auth and session files to the container.

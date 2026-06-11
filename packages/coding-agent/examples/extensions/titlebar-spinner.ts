@@ -5,21 +5,21 @@
  * Uses `ctx.ui.setTitle()` to update the terminal title via the extension API.
  *
  * Usage:
- *   pi --extension examples/extensions/titlebar-spinner.ts
+ *   iropi --extension examples/extensions/titlebar-spinner.ts
  */
 
 import path from "node:path";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@iroennys/iropi-coding-agent";
 
 const BRAILLE_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
-function getBaseTitle(pi: ExtensionAPI): string {
+function getBaseTitle(iropi: ExtensionAPI): string {
 	const cwd = path.basename(process.cwd());
 	const session = pi.getSessionName();
 	return session ? `π - ${session} - ${cwd}` : `π - ${cwd}`;
 }
 
-export default function (pi: ExtensionAPI) {
+export default function (iropi: ExtensionAPI) {
 	let timer: ReturnType<typeof setInterval> | null = null;
 	let frameIndex = 0;
 
@@ -29,7 +29,7 @@ export default function (pi: ExtensionAPI) {
 			timer = null;
 		}
 		frameIndex = 0;
-		ctx.ui.setTitle(getBaseTitle(pi));
+		ctx.ui.setTitle(getBaseTitle(iropi));
 	}
 
 	function startAnimation(ctx: ExtensionContext) {
@@ -44,15 +44,15 @@ export default function (pi: ExtensionAPI) {
 		}, 80);
 	}
 
-	pi.on("agent_start", async (_event, ctx) => {
+	iropi.on("agent_start", async (_event, ctx) => {
 		startAnimation(ctx);
 	});
 
-	pi.on("agent_end", async (_event, ctx) => {
+	iropi.on("agent_end", async (_event, ctx) => {
 		stopAnimation(ctx);
 	});
 
-	pi.on("session_shutdown", async (_event, ctx) => {
+	iropi.on("session_shutdown", async (_event, ctx) => {
 		stopAnimation(ctx);
 	});
 }

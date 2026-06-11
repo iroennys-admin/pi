@@ -5,20 +5,20 @@
  * Tool selection persists across session reloads and respects branch navigation.
  *
  * Usage:
- * 1. Copy this file to ~/.pi/agent/extensions/ or your project's .pi/extensions/
+ * 1. Copy this file to ~/.iropi/agent/extensions/ or your project's .iropi/extensions/
  * 2. Use /tools to open the tool selector
  */
 
-import type { ExtensionAPI, ExtensionContext, ToolInfo } from "@earendil-works/pi-coding-agent";
-import { getSettingsListTheme } from "@earendil-works/pi-coding-agent";
-import { Container, type SettingItem, SettingsList } from "@earendil-works/pi-tui";
+import type { ExtensionAPI, ExtensionContext, ToolInfo } from "@iroennys/iropi-coding-agent";
+import { getSettingsListTheme } from "@iroennys/iropi-coding-agent";
+import { Container, type SettingItem, SettingsList } from "@iroennys/iropi-tui";
 
 // State persisted to session
 interface ToolsState {
 	enabledTools: string[];
 }
 
-export default function toolsExtension(pi: ExtensionAPI) {
+export default function toolsExtension(iropi: ExtensionAPI) {
 	// Track enabled tools
 	let enabledTools: Set<string> = new Set();
 	let allTools: ToolInfo[] = [];
@@ -64,7 +64,7 @@ export default function toolsExtension(pi: ExtensionAPI) {
 	}
 
 	// Register /tools command
-	pi.registerCommand("tools", {
+	iropi.registerCommand("tools", {
 		description: "Enable/disable tools",
 		handler: async (_args, ctx) => {
 			if (ctx.mode !== "tui") {
@@ -135,12 +135,12 @@ export default function toolsExtension(pi: ExtensionAPI) {
 	});
 
 	// Restore state on session start
-	pi.on("session_start", async (_event, ctx) => {
+	iropi.on("session_start", async (_event, ctx) => {
 		restoreFromBranch(ctx);
 	});
 
 	// Restore state when navigating the session tree
-	pi.on("session_tree", async (_event, ctx) => {
+	iropi.on("session_tree", async (_event, ctx) => {
 		restoreFromBranch(ctx);
 	});
 }
