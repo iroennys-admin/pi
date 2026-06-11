@@ -14,7 +14,7 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.editPreferences
+
 import kotlinx.coroutines.*
 import java.io.*
 import java.util.zip.ZipInputStream
@@ -113,9 +113,7 @@ class MainActivity : AppCompatActivity() {
         setupNodeJS(iropiDir)
 
         // Mark setup as done
-        getSharedPreferences("iropi", MODE_PRIVATE).editPreferences {
-            putBoolean("setup_done", true)
-        }
+        getSharedPreferences("iropi", MODE_PRIVATE).edit().putBoolean("setup_done", true).apply()
     }
 
     private fun setupNodeJS(iropiDir: String) {
