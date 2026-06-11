@@ -3,9 +3,6 @@ name: Build IROPI Android APK
 on:
   push:
     branches: [main]
-    paths:
-      - 'android/**'
-      - '.github/workflows/build-android.yml'
   workflow_dispatch:
 
 permissions:
@@ -28,9 +25,8 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android platform tools
+      - name: Install Android platform and build tools
         run: |
-          sdkmanager --install "platform-tools"
           sdkmanager --install "platforms;android-34"
           sdkmanager --install "build-tools;34.0.0"
 
@@ -41,11 +37,9 @@ jobs:
 
       - name: Install IROPI dependencies
         run: npm install --ignore-scripts
-        working-directory: .
 
       - name: Build IROPI packages
         run: npm run build
-        working-directory: .
 
       - name: Prepare IROPI assets for Android
         run: |
@@ -58,30 +52,48 @@ jobs:
           # Copy essential runtime files
           cp packages/coding-agent/package.json android/app/src/main/assets/iropi/dist/
           
-          # Copy themes and assets
+          # Copy themes
           mkdir -p android/app/src/main/assets/iropi/dist/modes/interactive/theme
-          cp -r packages/coding-agent/src/modes/interactive/theme/*.json android/app/src/main/assets/iropi/dist/modes/interactive/theme/ 2>/dev/null || true
+          if ls packages/coding-agent/dist/modes/interactive/theme/*.json 1>/dev/null 2>&1; then
+            cp packages/coding-agent/dist/modes/interactive/theme/*.json android/app/src/main/assets/iropi/dist/modes/interactive/theme/
+          fi
           
+          # Copy assets
           mkdir -p android/app/src/main/assets/iropi/dist/modes/interactive/assets
-          cp -r packages/coding-agent/src/modes/interactive/assets/*.png android/app/src/main/assets/iropi/dist/modes/interactive/assets/ 2>/dev/null || true
+          if ls packages/coding-agent/dist/modes/interactive/assets/*.png 1>/dev/null 2>&1; then
+            cp packages/coding-agent/dist/modes/interactive/assets/*.png android/app/src/main/assets/iropi/dist/modes/interactive/assets/
+          fi
           
+          # Copy export-html templates
           mkdir -p android/app/src/main/assets/iropi/dist/core/export-html
-          cp -r packages/coding-agent/src/core/export-html/template.* android/app/src/main/assets/iropi/dist/core/export-html/ 2>/dev/null || true
+          if ls packages/coding-agent/dist/core/export-html/template.* 1>/dev/null 2>&1; then
+            cp packages/coding-agent/dist/core/export-html/template.* android/app/src/main/assets/iropi/dist/core/export-html/
+          fi
           mkdir -p android/app/src/main/assets/iropi/dist/core/export-html/vendor
-          cp -r packages/coding-agent/src/core/export-html/vendor/*.js android/app/src/main/assets/iropi/dist/core/export-html/vendor/ 2>/dev/null || true
+          if ls packages/coding-agent/dist/core/export-html/vendor/*.js 1>/dev/null 2>&1; then
+            cp packages/coding-agent/dist/core/export-html/vendor/*.js android/app/src/main/assets/iropi/dist/core/export-html/vendor/
+          fi
           
           # Copy docs
-          mkdir -p android/app/src/main/assets/iropi/dist/docs
-          cp -r packages/coding-agent/docs/* android/app/src/main/assets/iropi/dist/docs/ 2>/dev/null || true
+          if [ -d packages/coding-agent/docs ]; then
+            mkdir -p android/app/src/main/assets/iropi/dist/docs
+            cp -r packages/coding-agent/docs/* android/app/src/main/assets/iropi/dist/docs/ 2>/dev/null || true
+          fi
 
-          # Copy dependent packages (agent, ai, tui)
+          # Copy dependent packages
           mkdir -p android/app/src/main/assets/iropi/deps
           cp -r packages/agent/dist android/app/src/main/assets/iropi/deps/agent-dist 2>/dev/null || true
           cp -r packages/ai/dist android/app/src/main/assets/iropi/deps/ai-dist 2>/dev/null || true
           cp -r packages/tui/dist android/app/src/main/assets/iropi/deps/tui-dist 2>/dev/null || true
 
-          # Copy required node_modules
-          cp -r node_modules android/app/src/main/assets/iropi/node_modules/ 2>/dev/null || true
+          # Copy workspace node_modules (dependencies)
+          cp -r node_modules android/app/src/main/assets/iropi/node_modules/
+          
+          # Also copy workspace packages into node_modules
+          mkdir -p android/app/src/main/assets/iropi/node_modules/@iroennys
+          cp -r packages/agent android/app/src/main/assets/iropi/node_modules/@iroennys/iropi-agent-core 2>/dev/null || true
+          cp -r packages/ai android/app/src/main/assets/iropi/node_modules/@iroennys/iropi-ai 2>/dev/null || true
+          cp -r packages/tui android/app/src/main/assets/iropi/node_modules/@iroennys/iropi-tui 2>/dev/null || true
           
           echo "Assets prepared successfully"
           ls -la android/app/src/main/assets/iropi/dist/
@@ -110,29 +122,23 @@ jobs:
           echo "Node.js binaries downloaded:"
           ls -la android/app/src/main/assets/nodejs/
 
-      - name: Make gradlew executable
-        run: chmod +x android/gradlew || true
-
-      - name: Create gradlew
+      - name: Setup Gradle
         working-directory: android
         run: |
-          cat > gradlew << 'GRADLEW'
-          #!/bin/sh
-          exec gradle "$@"
-          GRADLEW
-          chmod +x gradlew
+          # Create local.properties
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          
+          # Install gradle wrapper
+          gradle wrapper --gradle-version 8.5
 
       - name: Build APK (Debug)
         working-directory: android
         run: |
-          # Create local.properties with SDK path
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          
-          # Build debug APK
-          gradle assembleDebug --no-daemon --stacktrace 2>&1 || true
-          
-          # List outputs
-          find app/build/outputs -name "*.apk" 2>/dev/null || echo "No APK found yet"
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: List APK outputs
+        run: |
+          find android/app/build/outputs -name "*.apk" 2>/dev/null || echo "No APK found"
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
@@ -143,7 +149,7 @@ jobs:
             android/app/build/outputs/apk/**/*.apk
           retention-days: 30
 
-      - name: Release APK
+      - name: Create Release with APK
         uses: softprops/action-gh-release@v2
         if: success()
         with:
@@ -165,4 +171,4 @@ jobs:
             1. Descarga el APK correspondiente a tu dispositivo
             2. Habilita "Orígenes desconocidos" en Ajustes > Seguridad
             3. Instala el APK
-            4. Configura tu API key en la app
+            4. Configura tu API key en la app (GEMINI_API_KEY, ANTHROPIC_API_KEY, etc.)
