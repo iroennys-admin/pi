@@ -104,14 +104,14 @@ jobs:
 
           # Download Node.js for arm64 (64-bit)
           echo "Downloading Node.js for arm64..."
-          curl -sL "https://unofficial-builds.nodejs.org/download/release/v22.12.0/node-v22.12.0-linux-arm64.tar.gz" -o /tmp/node-arm64.tar.gz
+          curl -sL "https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-arm64.tar.gz" -o /tmp/node-arm64.tar.gz
           tar -xzf /tmp/node-arm64.tar.gz -C /tmp/
           cp /tmp/node-v22.12.0-linux-arm64/bin/node android/app/src/main/assets/nodejs/node-arm64-v8a
           chmod +x android/app/src/main/assets/nodejs/node-arm64-v8a
           
           # Download Node.js for armv7l (32-bit)
           echo "Downloading Node.js for armv7l..."
-          curl -sL "https://unofficial-builds.nodejs.org/download/release/v22.12.0/node-v22.12.0-linux-armv7l.tar.gz" -o /tmp/node-armv7l.tar.gz
+          curl -sL "https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-armv7l.tar.gz" -o /tmp/node-armv7l.tar.gz
           tar -xzf /tmp/node-armv7l.tar.gz -C /tmp/
           cp /tmp/node-v22.12.0-linux-armv7l/bin/node android/app/src/main/assets/nodejs/node-armeabi-v7a
           chmod +x android/app/src/main/assets/nodejs/node-armeabi-v7a
