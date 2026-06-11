@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.IROPI" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#1f6feb</item>
+        <item name="colorPrimaryVariant">#388bfd</item>
+        <item name="colorOnPrimary">#ffffff</item>
+        <item name="android:statusBarColor">#0d1117</item>
+        <item name="android:navigationBarColor">#161b22</item>
+        <item name="android:windowBackground">#0d1117</item>
+    </style>
+</resources>

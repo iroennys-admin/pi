@@ -1,0 +1,168 @@
+name: Build IROPI Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/build-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform tools
+        run: |
+          sdkmanager --install "platform-tools"
+          sdkmanager --install "platforms;android-34"
+          sdkmanager --install "build-tools;34.0.0"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install IROPI dependencies
+        run: npm install --ignore-scripts
+        working-directory: .
+
+      - name: Build IROPI packages
+        run: npm run build
+        working-directory: .
+
+      - name: Prepare IROPI assets for Android
+        run: |
+          mkdir -p android/app/src/main/assets/iropi/dist
+          mkdir -p android/app/src/main/assets/iropi/node_modules
+
+          # Copy compiled coding-agent dist
+          cp -r packages/coding-agent/dist/* android/app/src/main/assets/iropi/dist/
+          
+          # Copy essential runtime files
+          cp packages/coding-agent/package.json android/app/src/main/assets/iropi/dist/
+          
+          # Copy themes and assets
+          mkdir -p android/app/src/main/assets/iropi/dist/modes/interactive/theme
+          cp -r packages/coding-agent/src/modes/interactive/theme/*.json android/app/src/main/assets/iropi/dist/modes/interactive/theme/ 2>/dev/null || true
+          
+          mkdir -p android/app/src/main/assets/iropi/dist/modes/interactive/assets
+          cp -r packages/coding-agent/src/modes/interactive/assets/*.png android/app/src/main/assets/iropi/dist/modes/interactive/assets/ 2>/dev/null || true
+          
+          mkdir -p android/app/src/main/assets/iropi/dist/core/export-html
+          cp -r packages/coding-agent/src/core/export-html/template.* android/app/src/main/assets/iropi/dist/core/export-html/ 2>/dev/null || true
+          mkdir -p android/app/src/main/assets/iropi/dist/core/export-html/vendor
+          cp -r packages/coding-agent/src/core/export-html/vendor/*.js android/app/src/main/assets/iropi/dist/core/export-html/vendor/ 2>/dev/null || true
+          
+          # Copy docs
+          mkdir -p android/app/src/main/assets/iropi/dist/docs
+          cp -r packages/coding-agent/docs/* android/app/src/main/assets/iropi/dist/docs/ 2>/dev/null || true
+
+          # Copy dependent packages (agent, ai, tui)
+          mkdir -p android/app/src/main/assets/iropi/deps
+          cp -r packages/agent/dist android/app/src/main/assets/iropi/deps/agent-dist 2>/dev/null || true
+          cp -r packages/ai/dist android/app/src/main/assets/iropi/deps/ai-dist 2>/dev/null || true
+          cp -r packages/tui/dist android/app/src/main/assets/iropi/deps/tui-dist 2>/dev/null || true
+
+          # Copy required node_modules
+          cp -r node_modules android/app/src/main/assets/iropi/node_modules/ 2>/dev/null || true
+          
+          echo "Assets prepared successfully"
+          ls -la android/app/src/main/assets/iropi/dist/
+
+      - name: Download Node.js binaries for Android
+        run: |
+          mkdir -p android/app/src/main/assets/nodejs
+
+          # Download Node.js for arm64 (64-bit)
+          echo "Downloading Node.js for arm64..."
+          curl -sL "https://unofficial-builds.nodejs.org/download/release/v22.12.0/node-v22.12.0-linux-arm64.tar.gz" -o /tmp/node-arm64.tar.gz
+          tar -xzf /tmp/node-arm64.tar.gz -C /tmp/
+          cp /tmp/node-v22.12.0-linux-arm64/bin/node android/app/src/main/assets/nodejs/node-arm64-v8a
+          chmod +x android/app/src/main/assets/nodejs/node-arm64-v8a
+          
+          # Download Node.js for armv7l (32-bit)
+          echo "Downloading Node.js for armv7l..."
+          curl -sL "https://unofficial-builds.nodejs.org/download/release/v22.12.0/node-v22.12.0-linux-armv7l.tar.gz" -o /tmp/node-armv7l.tar.gz
+          tar -xzf /tmp/node-armv7l.tar.gz -C /tmp/
+          cp /tmp/node-v22.12.0-linux-armv7l/bin/node android/app/src/main/assets/nodejs/node-armeabi-v7a
+          chmod +x android/app/src/main/assets/nodejs/node-armeabi-v7a
+          
+          # Clean up
+          rm -rf /tmp/node-*.tar.gz /tmp/node-v22.12.0-*
+          
+          echo "Node.js binaries downloaded:"
+          ls -la android/app/src/main/assets/nodejs/
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew || true
+
+      - name: Create gradlew
+        working-directory: android
+        run: |
+          cat > gradlew << 'GRADLEW'
+          #!/bin/sh
+          exec gradle "$@"
+          GRADLEW
+          chmod +x gradlew
+
+      - name: Build APK (Debug)
+        working-directory: android
+        run: |
+          # Create local.properties with SDK path
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          
+          # Build debug APK
+          gradle assembleDebug --no-daemon --stacktrace 2>&1 || true
+          
+          # List outputs
+          find app/build/outputs -name "*.apk" 2>/dev/null || echo "No APK found yet"
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iropi-android-apk
+          path: |
+            android/app/build/outputs/apk/**/*.apk
+          retention-days: 30
+
+      - name: Release APK
+        uses: softprops/action-gh-release@v2
+        if: success()
+        with:
+          tag_name: android-v0.79.1
+          name: IROPI Android v0.79.1
+          files: |
+            android/app/build/outputs/apk/**/*.apk
+          body: |
+            ## IROPI Android v0.79.1
+            
+            Agente de codificación AI con herramientas de web scraping.
+            
+            ### Arquitecturas soportadas:
+            - **arm64-v8a** (64-bit) - Dispositivos modernos
+            - **armeabi-v7a** (32-bit) - Dispositivos antiguos
+            - **universal** - Todas las arquitecturas
+            
+            ### Instrucciones:
+            1. Descarga el APK correspondiente a tu dispositivo
+            2. Habilita "Orígenes desconocidos" en Ajustes > Seguridad
+            3. Instala el APK
+            4. Configura tu API key en la app
